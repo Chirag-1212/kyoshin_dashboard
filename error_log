@@ -1,0 +1,1 @@
+[12-Feb-2026 13:00:06 Asia/Kathmandu] PHP Fatal error:  Call to a member function real_escape_string() on boolean in /home/sam1rko/public_html/suyogya_dash/system/database/drivers/mysqli/mysqli_driver.php on line 393
