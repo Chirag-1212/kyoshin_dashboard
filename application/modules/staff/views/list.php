@@ -51,7 +51,12 @@
                                     $i = 1;
                                 foreach ($items as $key => $value) {
                                     $offset = $offset + 1;
-                                    $des_dep = $this->db->get_where('staff_desig_depart', array('staff_id' => $value->id, 'status' => '1'))->row();
+                                  $query = $this->db->get_where('staff_desig_depart', array(
+    'staff_id' => $value->id,
+    'status' => '1'
+));
+
+$des_dep = ($query && $query->num_rows() > 0) ? $query->row() : null;
 
                                     if ($value->updated_by) {
                                     $updated_by = $this->db->get_where('users', array('id' => $value->updated_by))->row()->user_name;

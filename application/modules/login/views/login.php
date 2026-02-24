@@ -104,13 +104,19 @@
                 <div class="form-group has-feedback">
                     <input type="text" name="username" class="form-control" placeholder="Username"
                         value="<?php echo set_value('username'); ?>">
-                    <span class="glyphicon glyphicon-envelope form-control-feedback"></span>
+                    <span class="fa fa-user form-control-feedback"></span>
                     <?php echo form_error('username'); ?>
                 </div>
-                <div class="form-group has-feedback">
-                    <input type="password" name="password" class="form-control" placeholder="Password"
+                <div class="form-group has-feedback" style="position:relative;">
+                    <input type="password" name="password" id="password" class="form-control" placeholder="Password"
                         value="<?php echo set_value('password'); ?>">
-                    <span class="fa fa-lock form-control-feedback"></span>
+
+                    <!-- Eye Icon -->
+                    <span toggle="#password" 
+                        class="fa fa-eye toggle-password" 
+                        style="position:absolute; right:10px; top:10px; cursor:pointer;">
+                    </span>
+
                     <?php echo form_error('password'); ?>
                 </div>
                 <div class="row">
@@ -168,6 +174,20 @@
         close: true
     });
     </script>
+    <script>
+        $(document).on('click', '.toggle-password', function () {
+
+            $(this).toggleClass("fa-eye fa-eye-slash");
+
+            var input = $("#password");
+            if (input.attr("type") === "password") {
+                input.attr("type", "text");
+            } else {
+                input.attr("type", "password");
+            }
+
+        });
+        </script>
     <?php } ?>
 </body>
 
