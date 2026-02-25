@@ -46,7 +46,11 @@
 
                         <div class="box-header with-border" style="padding-left: 0;">
                             <h3 class="box-title">Media & Status</h3>
-                        </div>
+                        </div> 
+
+
+
+                        
 
                         <div class="row">
                             <div class="col-md-6">
