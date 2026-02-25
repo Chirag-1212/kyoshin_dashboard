@@ -38,7 +38,7 @@
                     <div class="box-body">
 
                         <div class="row">
-                            <div class="col-md-4">
+                            <div class="col-md-3">
                                 <div class="form-group">
                                     <label>Module Name<span class="req">*</span></label>
                                     <input type="text" name="module_name" class="form-control" id="module_name"
@@ -48,7 +48,7 @@
                                     <?php echo form_error('module_name', '<div class="error_message">', '</div>'); ?>
                                 </div>
                             </div>
-                            <div class="col-md-4">
+                            <div class="col-md-3">
                                 <div class="form-group">
                                     <label>Module Display Name<span class="req">*</span></label>
                                     <input type="text" name="display_name" class="form-control" id="display_name"
@@ -57,10 +57,28 @@
                                     <?php echo form_error('display_name', '<div class="error_message">', '</div>'); ?>
                                 </div>
                             </div>
+                            <div class="col-md-3">
+                                <label>Menu *</label>
+                                <select name="menu_id" class="form-control select2">
+                                    <option value="">Select Menu</option>
+                                    <?php foreach ($menus as $menu) { ?>
+                                        <option value="<?php echo $menu->id; ?>"
+                                        <?php echo (isset($detail->menu_id) && $detail->menu_id == $menu->id) ? 'selected' : ''; ?>>
+                                            <?php echo $menu->menu; ?>
+                                        </option>
+                                    <?php } ?>
+                                </select>
+                            </div>
+                            <div class="col-md-3">
+                                <label>Icon</label>
+                                <input type="text" name="icon" class="form-control"
+                                    placeholder="fas fa-users"
+                                    value="<?php echo set_value('icon', $detail->icon ?? ''); ?>">
+                            </div>
                         </div>
 
                         <div class="row">
-                            <div class="col-md-4">
+                            <div class="col-md-3">
                                 <div class="form-group">
                                     <label>Status</label>
                                     <select name="status" class="form-control select2" id="status">
