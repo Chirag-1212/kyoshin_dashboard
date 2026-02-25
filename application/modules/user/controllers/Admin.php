@@ -80,8 +80,8 @@ class Admin extends Auth_controller
 		$data['pagination'] = $this->pagination->create_links();
 		$data['items']  = $this->crud_model->getData('users', $param, $like, $config["per_page"], $page);
 		// echo $this->db->last_query();exit;
-		$data['designations'] = $this->crud_model->get_where_order_by('designation_para', array('status'=>'1'), 'designation_name', 'DESC');
-		$data['departs'] = $this->crud_model->get_where_order_by('department_para', array('status'=>'1'), 'department_name', 'DESC');
+		 $data['designations'] = $this->crud_model->get_where_order_by('designation_para', array('status'=>'1'), 'designation_name', 'DESC');
+		 $data['departs'] = $this->crud_model->get_where_order_by('department_para', array('status'=>'1'), 'department_name', 'DESC');
         $roleParam = [
 			'status' => '1'
 		];

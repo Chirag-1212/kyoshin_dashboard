@@ -1,0 +1,96 @@
+<section class="content">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="box">
+                <div class="box-header">
+                    <h3 class="box-title">
+                        <?php
+                        $check_form = $this->crud_model->get_module_function_for_role($redirect, $form_check_value);
+                        if ($check_form == true) {
+                        ?>
+                        <a href="<?php echo base_url($form_link); ?>" class="btn btn-sm btn-primary">Add New</a>
+                        <?php } ?>
+                    </h3>
+                    <div class="box-tools">
+                        <form action="" method="get">
+                            <div class="input-group input-group-sm hidden-xs" style="width: 150px;">
+
+                                <input type="text" name="table_search" class="form-control pull-right"
+                                    placeholder="Search"
+                                    value="<?php echo set_value('table_search', $this->input->get('table_search')); ?>">
+                                <div class="input-group-btn">
+                                    <button type="submit" class="btn btn-default"><i class="fa fa-search"></i></button>
+                                </div>
+
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                <!-- /.box-header -->
+                <div class="box-body">
+                    <table class="table table-bordered table-responsive">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Preview</th>
+                                <th>Main Title</th>
+                                <th>Section Tagline</th>
+                                <th>Date</th>
+                                <th>Status</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php if (!empty($list)): ?>
+                                <?php foreach ($list as $row): ?>
+                                    <tr>
+                                        <td><?php echo $row->id; ?></td>
+                                        <td>
+                                            <?php if ($row->DocPath != ''): ?>
+                                                <img src="<?php echo base_url($row->DocPath); ?>" 
+                                                     style="width: 60px; height: 40px; object-fit: cover; border-radius: 4px; border: 1px solid #ddd;">
+                                            <?php else: ?>
+                                                <span class="label label-default">No Image</span>
+                                            <?php endif; ?>
+                                        </td>
+                                        <td><strong><?php echo $row->Title; ?></strong></td>
+                                        <td><?php echo $row->Tagline; ?></td>
+                                        <td><?php echo date('M d, Y', strtotime($row->SubmitDt)); ?></td>
+                                        <td>
+                                            <?php if ($row->status == 1): ?>
+                                                <span class="label label-success">Active</span>
+                                            <?php else: ?>
+                                                <span class="label label-danger">Inactive</span>
+                                            <?php endif; ?>
+                                        </td>
+                                        <td style="text-align: center;">
+                                            <a href="<?php echo base_url($redirect . '/admin/form/' . $row->id); ?>" 
+                                               class="btn btn-xs btn-primary" title="Edit">
+                                                <i class="fa fa-pencil"></i>
+                                            </a>
+                                            <a href="<?php echo base_url($redirect . '/admin/delete/' . $row->id); ?>" 
+                                               class="btn btn-xs btn-danger" 
+                                               onclick="return confirm('Are you sure you want to delete this content?');" 
+                                               title="Delete">
+                                                <i class="fa fa-trash"></i>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                <?php endforeach; ?>
+                            <?php else: ?>
+                                <tr>
+                                    <td colspan="7" class="text-center" style="padding: 20px;">
+                                        No records found. <a href="<?php echo base_url($redirect . '/admin/form'); ?>">Create one now</a>.
+                                    </td>
+                                </tr>
+                            <?php endif; ?>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="box-footer clearfix">
+                    <?php echo isset($pagination) ? $pagination : ''; ?>
+                </div>
+            </div>
+            </div>
+    </div>
+</section>
