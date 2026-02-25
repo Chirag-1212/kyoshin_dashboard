@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Feb 23, 2026 at 12:09 PM
+-- Generation Time: Feb 24, 2026 at 12:54 PM
 -- Server version: 10.1.37-MariaDB
 -- PHP Version: 7.2.12
 
@@ -262,6 +262,62 @@ CREATE TABLE `curriculum_items` (
   `display_order` int(11) DEFAULT '0',
   `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `department_para`
+--
+
+CREATE TABLE `department_para` (
+  `id` int(11) NOT NULL,
+  `department_name` varchar(100) NOT NULL,
+  `department_name_np` varchar(100) DEFAULT NULL,
+  `department_code` varchar(25) NOT NULL,
+  `remarks` varchar(50) NOT NULL,
+  `created_by` int(11) NOT NULL,
+  `created_on` date NOT NULL,
+  `updated_by` int(11) NOT NULL,
+  `updated_on` date NOT NULL,
+  `status` enum('0','1','2') NOT NULL DEFAULT '1'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `designation_para`
+--
+
+CREATE TABLE `designation_para` (
+  `id` int(11) NOT NULL,
+  `designation_code` varchar(25) NOT NULL,
+  `designation_name` varchar(255) NOT NULL,
+  `designation_name_np` varchar(255) DEFAULT NULL,
+  `remarks` varchar(50) DEFAULT NULL,
+  `created_by` int(11) NOT NULL,
+  `created_on` date NOT NULL,
+  `updated_by` int(11) NOT NULL,
+  `updated_on` date NOT NULL,
+  `status` enum('0','1','2') NOT NULL DEFAULT '1'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Dumping data for table `designation_para`
+--
+
+INSERT INTO `designation_para` (`id`, `designation_code`, `designation_name`, `designation_name_np`, `remarks`, `created_by`, `created_on`, `updated_by`, `updated_on`, `status`) VALUES
+(1, 'member-service-representa', 'MEMBER SERVICE REPRESENTATIVE', 'MEMBER SERVICE REPRESENTATIVE', 'member-service-representative', 1, '2025-02-06', 0, '0000-00-00', '1'),
+(2, 'loan-officer', 'LOAN OFFICER', 'LOAN OFFICER', 'loan-officer', 1, '2025-02-06', 0, '0000-00-00', '1'),
+(3, 'ceo', 'CEO', 'CEO', 'ceo', 1, '2025-02-06', 0, '0000-00-00', '1'),
+(4, 'it-com-finance-assistant', 'IT COM. & FINANCE ASSISTANT', 'IT COM. & FINANCE ASSISTANT', 'it-com-finance-assistant', 1, '2025-02-06', 0, '0000-00-00', '1'),
+(5, 'officer-helper', 'OFFICER HELPER', 'OFFICER HELPER', 'officer-helper', 1, '2025-02-06', 0, '0000-00-00', '1'),
+(6, 'accountant', 'ACCOUNTANT', 'ACCOUNTANT', 'accountant', 1, '2025-02-06', 0, '0000-00-00', '1'),
+(7, 'admin-finance-officer', 'ADMIN & FINANCE OFFICER', 'ADMIN & FINANCE OFFICER', 'admin-finance-officer', 1, '2025-02-06', 0, '0000-00-00', '1'),
+(8, 'cashier', 'CASHIER', 'CASHIER', 'cashier', 1, '2025-02-06', 0, '0000-00-00', '1'),
+(9, '001', 'CHIEF ADVISOR', 'प्रमुख सल्लाहकार', '', 19, '2025-06-05', 0, '0000-00-00', '1'),
+(10, '002', 'CHAIRPERSON', 'अध्यक्ष', '', 19, '2025-06-16', 0, '0000-00-00', '1'),
+(11, '003', 'VICE CHAIRPERSON', 'उपाध्यक्ष', '', 19, '2025-06-16', 0, '0000-00-00', '1'),
+(12, '004', 'BOARD MEMBER', 'सञ्चालक', '', 19, '2025-06-16', 0, '0000-00-00', '1');
 
 -- --------------------------------------------------------
 
@@ -1298,10 +1354,45 @@ CREATE TABLE `site_settings` (
   `meta_title` varchar(255) DEFAULT NULL,
   `meta_description` varchar(255) DEFAULT NULL,
   `meta_key_words` varchar(255) DEFAULT NULL,
-  `updated_on` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `updated_on` date DEFAULT NULL,
   `updated_by` int(11) NOT NULL,
   `status` enum('0','1','2') NOT NULL DEFAULT '1'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Dumping data for table `site_settings`
+--
+
+INSERT INTO `site_settings` (`id`, `site_name`, `short_name`, `site_slogan`, `web_url`, `address`, `address_np`, `mobile`, `mobile_np`, `telephone`, `telephone_np`, `map_location`, `contact_detail`, `email`, `closing_time`, `opening_time`, `opening_time_friday`, `closing_time_friday`, `holiday_opening`, `holiday_closing`, `help_team`, `help_email`, `help_address`, `help_mobile`, `help_telephone`, `help_ext`, `help_team_np`, `help_address_np`, `help_mobile_np`, `help_telephone_np`, `help_ext_np`, `facebook`, `whatsapp`, `skype`, `twitter`, `instagram`, `youtube`, `googleplus`, `linked_in`, `viber`, `app_store`, `google_play`, `CSD`, `cash`, `privilege_counter`, `fax`, `swift`, `logo`, `fav`, `default_img`, `meta_title`, `meta_description`, `meta_key_words`, `updated_on`, `updated_by`, `status`) VALUES
+(1, 'Kyoshin', 'Kyoshin', 'Kyoshin', '', 'Kyoshin', '', '+977 01 4610998  , +977 9803857129', '', '', '', 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3533.2396666214972!2d85.33932867453467!3d27.678986526743536!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x39eb19ed91fbfcfd%3A0x976460858070f50c!2sSuyogya%20SACCOS!5e0!3m2!1sen!2snp!4v1738487882815!5m2!1sen!2snp', '<p>&#160;</p>\r\n\r\n<p>&#160;</p>\r\n', 'suyogyacoop@gmail.com', '17:00:00', '09:00:00', '09:00:00', '17:00:00', '10:00:00', '13:30:00', 'Sapchuhang Tumbahangphe', 'sapchulimbu@gmail.com', 'IT COM & FINANCE', '9840195051', '014610998', '607', '', '', '', '', '', 'https://www.facebook.com/suyogya.saccos', '', '', '', '', '', 'google.com', 'www.linkedin.com', '', '', '', '1100 / 1101', '1102', '1103', '01-4425955', 'PCBLNPKA', 'uploads/site_settings/Logo.png', 'uploads/site_settings/Logo1.png', 'uploads/site_settings/Logo2.png', 'SUYOGYA SACCOS', '<p><strong>Objective</strong></p>\r\n\r\n<p>&#160;</p>', 'Kyoshin', '2026-02-24', 1, '1');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `staff_desig_depart`
+--
+
+CREATE TABLE `staff_desig_depart` (
+  `id` int(11) NOT NULL,
+  `staff_id` int(11) NOT NULL,
+  `branch_id` int(11) NOT NULL,
+  `designation_code` varchar(25) NOT NULL,
+  `department_code` varchar(25) NOT NULL,
+  `from` date NOT NULL,
+  `to` date NOT NULL,
+  `created_by` int(11) NOT NULL,
+  `created_on` datetime NOT NULL,
+  `updated_by` int(11) NOT NULL,
+  `updated_on` datetime NOT NULL,
+  `status` enum('0','1','2') NOT NULL DEFAULT '1'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Dumping data for table `staff_desig_depart`
+--
+
+INSERT INTO `staff_desig_depart` (`id`, `staff_id`, `branch_id`, `designation_code`, `department_code`, `from`, `to`, `created_by`, `created_on`, `updated_by`, `updated_on`, `status`) VALUES
+(1, 8, 0, '', '', '2025-02-03', '0000-00-00', 1, '2025-02-16 00:00:00', 0, '0000-00-00 00:00:00', '1');
 
 -- --------------------------------------------------------
 
@@ -1333,8 +1424,8 @@ CREATE TABLE `staff_infos` (
 --
 
 INSERT INTO `staff_infos` (`id`, `branch_id`, `full_name`, `slug`, `description`, `featured_image`, `appointed_date`, `temp_address`, `permanent_address`, `contact`, `email`, `created_on`, `created_by`, `updated_on`, `updated_by`, `status`) VALUES
-(2, 0, 'Cheleena Maharjan', '', '', 'uploads/staff/SUYOGYAfav3.PNG', '2022-03-01', 'Lalitpur', 'Lalitpur', '9860013046', 'cheleena@nyatapol.biz', '2022-05-26', 3, '2025-01-30', 1, '1'),
-(3, 0, 'Nyatapol', '1664365571', '', 'uploads/staff/SUYOGYAfav2.PNG', '2022-09-28', 'Prasuti Marga -509, Kathmandu, Nepal', 'Prasuti Marga -509, Kathmandu, Nepal', '+977-1-4102299, 4102213 ,4102239', 'info@nyatapol.com', '2022-09-28', 1, '2025-01-30', 1, '1');
+(2, 0, 'Cheleena Maharjan', '', '', 'uploads/staff/item-210516-ab8e9ef52f.jpg', '2022-03-01', 'Lalitpur', 'Lalitpur', '9860013046', 'cheleena@nyatapol.biz', '2022-05-26', 3, '2026-02-24', 1, '1'),
+(3, 0, 'Nyatapol', '1664365571', '', 'uploads/staff/item-260118-5886a875b5.png', '2022-09-28', 'Prasuti Marga -509, Kathmandu, Nepal', 'Prasuti Marga -509, Kathmandu, Nepal', '+977-1-4102299, 4102213 ,4102239', 'info@nyatapol.com', '2022-09-28', 1, '2026-02-24', 1, '1');
 
 -- --------------------------------------------------------
 
@@ -1375,10 +1466,10 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`id`, `user_name`, `password`, `auth_code`, `role_id`, `staff_id`, `designation_code`, `depart_id`, `appointed_date`, `full_name`, `profile_image`, `temp_address`, `permanent_address`, `country_code`, `contact`, `description`, `email`, `created_on`, `created_by`, `updated_on`, `updated_by`, `currently_working`, `status`, `psd_changed_date`, `psd_changed`) VALUES
-(1, 'nyatapol', 'c7098dd01fd11866dcb79e33d03ecfc5', 'cf16d55601715792047c57fbf18b00b2', 1, 3, 'HRM', 3, NULL, 'Nyatapol', 'https://nyatapol.biz/shine/uploads/logo/download.png', 'Babarmahal', '', 'nepa', '+977 1-4102299', '', 'nyatapol@gmail.com', '2022-01-19', 0, '2022-09-28', 1, 'Yes', '1', '0000-00-00', '0'),
+(1, 'nyatapol', 'c7098dd01fd11866dcb79e33d03ecfc5', 'e5cb77f621cb61051bdf8cf82adc2bdc', 1, 3, 'HRM', 3, NULL, 'Nyatapol', 'https://nyatapol.biz/shine/uploads/logo/download.png', 'Babarmahal', '', 'nepa', '+977 1-4102299', '', 'nyatapol@gmail.com', '2022-01-19', 0, '2022-09-28', 1, 'Yes', '1', '0000-00-00', '0'),
 (13, 'ntech', 'c7098dd01fd11866dcb79e33d03ecfc5', '6d5e8f350dafb021448947f012bddce2', 2, 3, NULL, NULL, NULL, '', '', '', '', '', '', '', 'dil@nyatapol.biz', '2024-02-28', 2, '0000-00-00', 0, 'Yes', '1', '0000-00-00', '0'),
 (17, 'chelina', 'c7098dd01fd11866dcb79e33d03ecfc5', '05d28f9f75328d041e0efcbd53ba482f', 2, 2, NULL, NULL, NULL, '', NULL, '', '', '', '', '', 'cheleena@nyatapol.biz', '2024-09-24', 1, '0000-00-00', 0, 'Yes', '1', '0000-00-00', '0'),
-(1, 'nyatapol', 'c7098dd01fd11866dcb79e33d03ecfc5', '5dd43a1c101a2ac59b897239cd15905e', 1, 3, 'HRM', 3, NULL, 'Nyatapol', 'https://nyatapol.biz/shine/uploads/logo/download.png', 'Babarmahal', '', 'nepa', '+977 1-4102299', '', 'nyatapol@gmail.com', '2022-01-19', 0, '2022-09-28', 1, 'Yes', '1', '0000-00-00', '0'),
+(1, 'nyatapol', 'c7098dd01fd11866dcb79e33d03ecfc5', 'e5cb77f621cb61051bdf8cf82adc2bdc', 1, 3, 'HRM', 3, NULL, 'Nyatapol', 'https://nyatapol.biz/shine/uploads/logo/download.png', 'Babarmahal', '', 'nepa', '+977 1-4102299', '', 'nyatapol@gmail.com', '2022-01-19', 0, '2022-09-28', 1, 'Yes', '1', '0000-00-00', '0'),
 (13, 'ntech', 'c7098dd01fd11866dcb79e33d03ecfc5', '6d5e8f350dafb021448947f012bddce2', 2, 3, NULL, NULL, NULL, '', '', '', '', '', '', '', 'dil@nyatapol.biz', '2024-02-28', 2, '0000-00-00', 0, 'Yes', '1', '0000-00-00', '0'),
 (17, 'chelina', 'c7098dd01fd11866dcb79e33d03ecfc5', '05d28f9f75328d041e0efcbd53ba482f', 2, 2, NULL, NULL, NULL, '', NULL, '', '', '', '', '', 'cheleena@nyatapol.biz', '2024-09-24', 1, '0000-00-00', 0, 'Yes', '1', '0000-00-00', '0');
 
@@ -1642,7 +1733,173 @@ INSERT INTO `user_log` (`id`, `module`, `function`, `user_id`, `date_time`) VALU
 (0, 'dashboard', NULL, 1, '2026-02-23 11:08:43'),
 (0, 'module', 'all', 1, '2026-02-23 11:08:57'),
 (0, 'dashboard', NULL, 1, '2026-02-23 11:08:57'),
-(0, 'dashboard', NULL, 1, '2026-02-23 11:08:57');
+(0, 'dashboard', NULL, 1, '2026-02-23 11:08:57'),
+(0, 'dashboard', NULL, 1, '2026-02-23 11:16:30'),
+(0, 'dashboard', NULL, 1, '2026-02-23 11:16:36'),
+(0, 'dashboard', NULL, 1, '2026-02-23 11:16:37'),
+(0, 'content', 'menu', 1, '2026-02-23 11:16:44'),
+(0, 'dashboard', NULL, 1, '2026-02-23 11:16:48'),
+(0, 'dashboard', NULL, 1, '2026-02-23 11:16:48'),
+(0, 'dashboard', NULL, 1, '2026-02-23 11:16:49'),
+(0, 'content', 'all', 1, '2026-02-23 11:16:49'),
+(0, 'dashboard', NULL, 1, '2026-02-23 11:16:51'),
+(0, 'dashboard', NULL, 1, '2026-02-23 11:16:52'),
+(0, 'dashboard', NULL, 1, '2026-02-23 11:16:52'),
+(0, 'dashboard', NULL, 1, '2026-02-23 11:17:03'),
+(0, 'dashboard', NULL, 1, '2026-02-23 11:17:04'),
+(0, 'dashboard', NULL, 1, '2026-02-23 11:17:04'),
+(0, 'notice_career', 'all', 1, '2026-02-23 11:17:09'),
+(0, 'dashboard', NULL, 1, '2026-02-23 11:17:09'),
+(0, 'dashboard', NULL, 1, '2026-02-23 11:17:10'),
+(0, 'dashboard', NULL, 1, '2026-02-23 11:17:11'),
+(0, 'dashboard', NULL, 1, '2026-02-23 11:17:11'),
+(0, 'dashboard', NULL, 1, '2026-02-23 11:17:12'),
+(0, 'dashboard', NULL, 1, '2026-02-24 05:16:43'),
+(0, 'dashboard', NULL, 1, '2026-02-24 05:16:50'),
+(0, 'dashboard', NULL, 1, '2026-02-24 05:16:54'),
+(0, 'dashboard', NULL, 1, '2026-02-24 05:41:51'),
+(0, 'dashboard', NULL, 1, '2026-02-24 05:41:52'),
+(0, 'dashboard', NULL, 1, '2026-02-24 05:41:52'),
+(0, 'site_settings', NULL, 1, '2026-02-24 05:41:55'),
+(0, 'dashboard', NULL, 1, '2026-02-24 05:41:56'),
+(0, 'dashboard', NULL, 1, '2026-02-24 05:41:57'),
+(0, 'site_settings', NULL, 1, '2026-02-24 05:42:15'),
+(0, 'dashboard', NULL, 1, '2026-02-24 05:42:15'),
+(0, 'dashboard', NULL, 1, '2026-02-24 05:42:16'),
+(0, 'site_settings', NULL, 1, '2026-02-24 05:42:27'),
+(0, 'dashboard', NULL, 1, '2026-02-24 05:42:27'),
+(0, 'dashboard', NULL, 1, '2026-02-24 05:42:28'),
+(0, 'site_settings', NULL, 1, '2026-02-24 05:43:57'),
+(0, 'dashboard', NULL, 1, '2026-02-24 05:43:58'),
+(0, 'dashboard', NULL, 1, '2026-02-24 05:43:59'),
+(0, 'site_settings', NULL, 1, '2026-02-24 05:44:01'),
+(0, 'dashboard', NULL, 1, '2026-02-24 05:44:02'),
+(0, 'dashboard', NULL, 1, '2026-02-24 05:44:03'),
+(0, 'site_settings', NULL, 1, '2026-02-24 07:02:49'),
+(0, 'dashboard', NULL, 1, '2026-02-24 07:02:50'),
+(0, 'dashboard', NULL, 1, '2026-02-24 07:02:51'),
+(0, 'site_settings', NULL, 1, '2026-02-24 07:02:58'),
+(0, 'dashboard', NULL, 1, '2026-02-24 07:02:59'),
+(0, 'dashboard', NULL, 1, '2026-02-24 07:03:00'),
+(0, 'site_settings', NULL, 1, '2026-02-24 07:05:44'),
+(0, 'dashboard', NULL, 1, '2026-02-24 07:05:45'),
+(0, 'dashboard', NULL, 1, '2026-02-24 07:05:46'),
+(0, 'site_settings', NULL, 1, '2026-02-24 07:05:48'),
+(0, 'dashboard', NULL, 1, '2026-02-24 07:05:49'),
+(0, 'dashboard', NULL, 1, '2026-02-24 07:05:50'),
+(0, 'site_settings', NULL, 1, '2026-02-24 07:08:47'),
+(0, 'dashboard', NULL, 1, '2026-02-24 07:08:48'),
+(0, 'dashboard', NULL, 1, '2026-02-24 07:08:49'),
+(0, 'site_settings', NULL, 1, '2026-02-24 07:13:31'),
+(0, 'site_settings', NULL, 1, '2026-02-24 07:13:53'),
+(0, 'site_settings', NULL, 1, '2026-02-24 07:13:53'),
+(0, 'site_settings', NULL, 1, '2026-02-24 07:14:31'),
+(0, 'site_settings', NULL, 1, '2026-02-24 07:14:57'),
+(0, 'site_settings', NULL, 1, '2026-02-24 07:14:58'),
+(0, 'site_settings', NULL, 1, '2026-02-24 07:15:14'),
+(0, 'site_settings', NULL, 1, '2026-02-24 07:15:14'),
+(0, 'dashboard', NULL, 1, '2026-02-24 07:15:28'),
+(0, 'staff', 'all', 1, '2026-02-24 07:15:39'),
+(0, 'staff', 'all', 1, '2026-02-24 07:15:46'),
+(0, 'dashboard', NULL, 1, '2026-02-24 09:24:20'),
+(0, 'staff', 'all', 1, '2026-02-24 09:24:24'),
+(0, 'staff', 'all', 1, '2026-02-24 09:27:29'),
+(0, 'staff', 'form', 1, '2026-02-24 09:27:33'),
+(0, 'staff', 'all', 1, '2026-02-24 09:27:44'),
+(0, 'staff', 'form', 1, '2026-02-24 09:27:45'),
+(0, 'staff', 'all', 1, '2026-02-24 09:27:47'),
+(0, 'staff', 'form', 1, '2026-02-24 09:27:57'),
+(0, 'staff', 'form', 1, '2026-02-24 09:31:15'),
+(0, 'staff', 'form', 1, '2026-02-24 09:31:19'),
+(0, 'staff', 'form', 1, '2026-02-24 09:32:00'),
+(0, 'staff', 'form', 1, '2026-02-24 09:32:02'),
+(0, 'staff', 'form', 1, '2026-02-24 09:34:25'),
+(0, 'staff', 'form', 1, '2026-02-24 09:35:09'),
+(0, 'staff', 'all', 1, '2026-02-24 09:35:40'),
+(0, 'staff', 'form', 1, '2026-02-24 09:41:05'),
+(0, 'staff', 'form', 1, '2026-02-24 09:44:03'),
+(0, 'staff', 'form', 1, '2026-02-24 09:44:06'),
+(0, 'staff', 'form', 1, '2026-02-24 09:44:06'),
+(0, 'staff', 'form', 1, '2026-02-24 09:44:06'),
+(0, 'staff', 'form', 1, '2026-02-24 09:44:56'),
+(0, 'staff', 'all', 1, '2026-02-24 09:44:57'),
+(0, 'staff', 'form', 1, '2026-02-24 09:44:59'),
+(0, 'staff', 'all', 1, '2026-02-24 09:46:36'),
+(0, 'module', 'all', 1, '2026-02-24 09:46:41'),
+(0, 'module', 'all', 1, '2026-02-24 09:46:44'),
+(0, 'module', 'all', 1, '2026-02-24 09:46:47'),
+(0, 'module', 'all', 1, '2026-02-24 09:46:49'),
+(0, 'module', 'all', 1, '2026-02-24 09:46:52'),
+(0, 'module', 'form', 1, '2026-02-24 09:46:57'),
+(0, 'module', 'all', 1, '2026-02-24 09:47:02'),
+(0, 'module', 'role_function', 1, '2026-02-24 09:47:07'),
+(0, 'module', 'role_function', 1, '2026-02-24 09:49:28'),
+(0, 'staff', 'all', 1, '2026-02-24 09:49:32'),
+(0, 'staff', 'form', 1, '2026-02-24 09:49:34'),
+(0, 'staff', 'form', 1, '2026-02-24 09:50:24'),
+(0, 'staff', 'all', 1, '2026-02-24 09:50:28'),
+(0, 'staff', 'form', 1, '2026-02-24 09:50:30'),
+(0, 'staff', 'all', 1, '2026-02-24 09:50:31'),
+(0, 'staff', 'all', 1, '2026-02-24 09:50:50'),
+(0, 'staff', 'form', 1, '2026-02-24 09:50:52'),
+(0, 'staff', 'all', 1, '2026-02-24 09:50:54'),
+(0, 'staff', 'form', 1, '2026-02-24 09:50:56'),
+(0, 'staff', 'all', 1, '2026-02-24 09:50:57'),
+(0, 'staff', 'form', 1, '2026-02-24 09:50:59'),
+(0, 'staff', 'all', 1, '2026-02-24 09:51:08'),
+(0, 'staff', 'all', 1, '2026-02-24 09:51:35'),
+(0, 'staff', 'form', 1, '2026-02-24 09:51:37'),
+(0, 'staff', 'form', 1, '2026-02-24 09:53:34'),
+(0, 'staff', 'all', 1, '2026-02-24 09:53:50'),
+(0, 'staff', 'form', 1, '2026-02-24 09:53:51'),
+(0, 'staff', 'all', 1, '2026-02-24 09:53:57'),
+(0, 'staff', 'form', 1, '2026-02-24 09:54:12'),
+(0, 'staff', 'all', 1, '2026-02-24 09:54:19'),
+(0, 'staff', 'all', 1, '2026-02-24 09:54:35'),
+(0, 'staff', 'form', 1, '2026-02-24 09:54:37'),
+(0, 'staff', 'all', 1, '2026-02-24 09:54:38'),
+(0, 'staff', 'form', 1, '2026-02-24 09:54:45'),
+(0, 'staff', 'all', 1, '2026-02-24 09:54:48'),
+(0, 'staff', 'form', 1, '2026-02-24 09:54:51'),
+(0, 'staff', 'all', 1, '2026-02-24 09:54:53'),
+(0, 'staff', 'all', 1, '2026-02-24 09:55:04'),
+(0, 'staff', 'form', 1, '2026-02-24 09:55:05'),
+(0, 'staff', 'all', 1, '2026-02-24 09:55:07'),
+(0, 'staff', 'all', 1, '2026-02-24 09:55:38'),
+(0, 'staff', 'form', 1, '2026-02-24 09:55:39'),
+(0, 'designation', 'all', 1, '2026-02-24 09:55:59'),
+(0, 'staff', 'form', 1, '2026-02-24 09:56:01'),
+(0, 'staff', 'form', 1, '2026-02-24 09:57:00'),
+(0, 'designation', 'all', 1, '2026-02-24 09:57:18'),
+(0, 'department', 'all', 1, '2026-02-24 09:57:26'),
+(0, 'staff', 'all', 1, '2026-02-24 09:57:33'),
+(0, 'staff', 'form', 1, '2026-02-24 09:57:36'),
+(0, 'staff', 'form', 1, '2026-02-24 09:58:15'),
+(0, 'staff', 'all', 1, '2026-02-24 09:58:15'),
+(0, 'staff', 'form', 1, '2026-02-24 09:58:21'),
+(0, 'staff', 'form', 1, '2026-02-24 09:58:28'),
+(0, 'staff', 'all', 1, '2026-02-24 09:58:28'),
+(0, 'staff', 'form', 1, '2026-02-24 09:58:30'),
+(0, 'staff', 'form', 1, '2026-02-24 09:58:41'),
+(0, 'staff', 'all', 1, '2026-02-24 09:58:42'),
+(0, 'staff', 'soft_delete', 1, '2026-02-24 09:58:58'),
+(0, 'staff', 'all', 1, '2026-02-24 09:58:58'),
+(0, 'officers', 'all', 1, '2026-02-24 11:28:12'),
+(0, 'staff', 'all', 1, '2026-02-24 11:28:17'),
+(0, 'staff_dep_deg', 'all', 1, '2026-02-24 11:28:44'),
+(0, 'staff_dep_deg', 'all', 1, '2026-02-24 11:28:51'),
+(0, 'staff_dep_deg', 'all', 1, '2026-02-24 11:28:55'),
+(0, 'staff_dep_deg', 'form', 1, '2026-02-24 11:28:56'),
+(0, 'count', 'all', 1, '2026-02-24 11:48:19'),
+(0, 'staff_dep_deg', 'form', 1, '2026-02-24 11:48:21'),
+(0, 'service', 'all', 1, '2026-02-24 11:48:30'),
+(0, 'staff_dep_deg', 'form', 1, '2026-02-24 11:48:32'),
+(0, 'site_settings', NULL, 1, '2026-02-24 11:48:44'),
+(0, 'team', 'all', 1, '2026-02-24 11:50:18'),
+(0, 'site_settings', NULL, 1, '2026-02-24 11:50:20'),
+(0, 'site_settings', NULL, 1, '2026-02-24 11:53:04'),
+(0, 'site_settings', NULL, 1, '2026-02-24 11:53:35'),
+(0, 'site_settings', NULL, 1, '2026-02-24 11:53:45');
 
 -- --------------------------------------------------------
 
@@ -1745,6 +2002,18 @@ ALTER TABLE `curriculum_items`
   ADD KEY `idx_display_order` (`display_order`);
 
 --
+-- Indexes for table `department_para`
+--
+ALTER TABLE `department_para`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `designation_para`
+--
+ALTER TABLE `designation_para`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- Indexes for table `news_articles`
 --
 ALTER TABLE `news_articles`
@@ -1774,9 +2043,15 @@ ALTER TABLE `services`
   ADD KEY `idx_display_order` (`display_order`);
 
 --
--- Indexes for table `site_settings`
+-- Indexes for table `staff_desig_depart`
 --
-ALTER TABLE `site_settings`
+ALTER TABLE `staff_desig_depart`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `staff_infos`
+--
+ALTER TABLE `staff_infos`
   ADD PRIMARY KEY (`id`);
 
 --
@@ -1826,6 +2101,18 @@ ALTER TABLE `curriculum_items`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
+-- AUTO_INCREMENT for table `department_para`
+--
+ALTER TABLE `department_para`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `designation_para`
+--
+ALTER TABLE `designation_para`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
+
+--
 -- AUTO_INCREMENT for table `news_articles`
 --
 ALTER TABLE `news_articles`
@@ -1844,10 +2131,16 @@ ALTER TABLE `services`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT for table `site_settings`
+-- AUTO_INCREMENT for table `staff_desig_depart`
 --
-ALTER TABLE `site_settings`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+ALTER TABLE `staff_desig_depart`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
+--
+-- AUTO_INCREMENT for table `staff_infos`
+--
+ALTER TABLE `staff_infos`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
 -- Constraints for dumped tables

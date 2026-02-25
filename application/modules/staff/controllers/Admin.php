@@ -86,7 +86,9 @@ class Admin extends Auth_controller {
 	{ 
 		
 		$data['detail'] = $this->db->get_where($this->table,array('id'=>$id))->row();
+		// print_r($data['detail']);exit;
 		$data['dep_deg'] = $this->crud_model->get_where_single('staff_desig_depart',array('status'=>'1','staff_id'=>$id)); 
+		// print_r($data['dep_deg']);exit;
 		$upload_path = 'uploads/staff/';
 		if($this->input->post()){
 			$this->form_validation->set_rules('full_name', 'Full Name', 'required|trim');  
@@ -124,19 +126,19 @@ class Admin extends Auth_controller {
 				}
 
 				$data = array(
-							'full_name' => $this->input->post('full_name'), 
-							'description' => $this->input->post('description'),
-							'featured_image' => $featured_image,  
-							// 'designation_code' => $this->input->post('designation_code'),
-							'temp_address' => $this->input->post('temp_address'),
-							'permanent_address' => $this->input->post('permanent_address'),
-							'contact' => $this->input->post('contact'), 
-							'email' => $this->input->post('email'),
-				// 			'country_code' => $this->input->post('country_code'),
-							// 'department_code' => $this->input->post('department_code'),
-							'appointed_date' => $this->input->post('appointed_date'),
-							'status' => $this->input->post('status'),  
-						);   				
+					'full_name' => $this->input->post('full_name'), 
+					'description' => $this->input->post('description'),
+					'featured_image' => $featured_image,  
+					// 'designation_code' => $this->input->post('designation_code'),
+					'temp_address' => $this->input->post('temp_address'),
+					'permanent_address' => $this->input->post('permanent_address'),
+					'contact' => $this->input->post('contact'), 
+					'email' => $this->input->post('email'),
+		// 			'country_code' => $this->input->post('country_code'),
+					// 'department_code' => $this->input->post('department_code'),
+					'appointed_date' => $this->input->post('appointed_date'),
+					'status' => $this->input->post('status'),  
+				);   				
 				$id = $this->input->post('id');	 	
 				if($id == ''){ 
 				    $checktext=$this->crud_model->detectTextLanguage($this->input->post('full_name'));

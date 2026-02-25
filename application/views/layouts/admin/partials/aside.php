@@ -1274,59 +1274,6 @@
             $check_staff = $this->crud_model->get_module_for_role('staff');
             if ($check_staff == true) {
             ?>
-            <li class="treeview <?php echo isset($officers)? 'active' : ''; ?>">
-                <a href="#">
-                    <i class="fa fa-users"></i> <span>Officers</span>
-                    <span class="pull-right-container">
-                        <i class="fa fa-angle-left pull-right"></i>
-                    </span>
-                </a>
-                <ul class="treeview-menu">
-                    <li class="<?php echo isset($officers)? ($officers == 'officers-all' ? 'active' :''): ''; ?>">
-                        <a href="<?php echo base_url('officers/admin/all'); ?>"><i class="fa fa-circle-o"></i> List</a>
-                    </li>
-                    <li class="<?php echo isset($officers)? ($officers == 'officers-form' ? 'active' :''): ''; ?>">
-                        <a href="<?php echo base_url('officers/admin/form'); ?>"><i class="fa fa-circle-o"></i> Add</a>
-                    </li>
-                </ul>
-            </li>
-            <?php
-            // $check_branch_wise_officers = $this->crud_model->get_module_for_role('branch_wise_officers');
-            // if ($check_branch_wise_officers == true) {
-            ?>
-            <!--<li class="treeview <?php echo isset($branch_wise_officer)?  'active' : ''; ?>">-->
-            <!--    <a href="#">-->
-            <!--        <i class="fa fa-address-card"></i> <span> Branch wise officers</span>-->
-            <!--        <span class="pull-right-container">-->
-            <!--            <i class="fa fa-angle-left pull-right"></i>-->
-            <!--        </span>-->
-            <!--    </a>-->
-            <!--    <ul class="treeview-menu">-->
-
-                    <?php
-                    // $check_branch_wise_officers_all = $this->crud_model->get_module_function_for_role('branch_wise_officers', 'all');
-                    // if ($check_branch_wise_officers_all == true) {
-                    ?>
-                    <!--<li-->
-                    <!--    class="<?php echo isset($branch_wise_officer)? ($branch_wise_officer == 'branch_wise_officer-all' ? 'active' :''): ''; ?>">-->
-                    <!--    <a href="<?php echo base_url('branch_wise_officers/admin/all'); ?>"><i-->
-                    <!--            class="fa fa-circle-o"></i> List</a>-->
-                    <!--</li>-->
-                    <?php //} ?>
-
-                    <?php
-                    // $check_branch_wise_officers_form = $this->crud_model->get_module_function_for_role('branch_wise_officers', 'form');
-                    // if ($check_branch_wise_officers_form == true) {
-                    ?>
-                    <!--<li-->
-                    <!--    class="<?php echo isset($branch_wise_officer)? ($branch_wise_officer == 'branch_wise_officer-form' ? 'active' :''): ''; ?>">-->
-                    <!--    <a href="<?php echo base_url('branch_wise_officers/admin/form'); ?>"><i-->
-                    <!--            class="fa fa-circle-o"></i> Add New</a>-->
-                    <!--</li>-->
-                    <?php //} ?>
-            <!--    </ul>-->
-            <!--</li>-->
-            <?php //} ?>
             <li class="treeview <?php echo isset($staff)? 'active' : ''; ?>">
                 <a href="#">
                     <i class="fa fa-user"></i> <span>Staff</span>
@@ -1365,49 +1312,7 @@
                 </ul>
             </li>
             <?php } ?>
-            <?php
-                $check_team = $this->crud_model->get_module_for_role('team');
-                if ($check_team == true) {
-                ?>
-            <li class="treeview <?php echo isset($team)? 'active' : ''; ?>">
-                <a href="#">
-                    <i class="fa fa-users"></i> <span>Team</span>
-                    <span class="pull-right-container">
-                        <i class="fa fa-angle-left pull-right"></i>
-                    </span>
-                </a>
-                <ul class="treeview-menu">
-                    <?php
-                    $check_group_all = $this->crud_model->get_module_function_for_role('group', 'all');
-                    if ($check_group_all == true) {
-                    ?>
-                    <li class="<?php echo isset($team)? ($team == 'team-group' ? 'active' :''): ''; ?>">
-                        <a href="<?php echo base_url('group/admin/all'); ?>"><i class="fa fa-circle-o"></i> Team
-                            Group</a>
-                    </li>
-
-                    <?php } ?>
-
-                    <?php
-                    $check_team_all = $this->crud_model->get_module_function_for_role('team', 'all');
-                    if ($check_team_all == true) {
-                    ?>
-                    <li class="<?php echo isset($team)? ($team == 'team-all' ? 'active' :''): ''; ?>">
-                        <a href="<?php echo base_url('team/admin/all'); ?>"><i class="fa fa-circle-o"></i> Team List</a>
-                    </li>
-                    <?php } ?>
-                    <?php
-                    $check_team_form = $this->crud_model->get_module_function_for_role('team', 'form');
-                    if ($check_team_form == true) {
-                    ?>
-                    <li class="<?php echo isset($team)? ($team == 'team-form' ? 'active' :''): ''; ?>">
-                        <a href="<?php echo base_url('team/admin/form'); ?>"><i class="fa fa-circle-o"></i> Add New</a>
-                    </li>
-
-                    <?php } ?>
-                </ul>
-            </li>
-            <?php } ?>
+            
 
             <li class="header">Settings</li>
             <?php

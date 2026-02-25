@@ -97,20 +97,29 @@
         </div>
 
         <div class="login-box-body">
-        <img width="300px" src="<?php echo base_url().$site_settings->logo; ?>" alt="">
-            <h2 class="login-box-msg"><b><?php echo $site_settings->short_name; ?></b></h2>
+            <div class="login-box-msg">
+                 <img width="300px" src="<?php echo base_url().$site_settings->logo; ?>" alt="<?php echo $site_settings->short_name; ?>">
+            </div>
+           
+            <!-- <h2 class="login-box-msg"><b><?php echo $site_settings->short_name; ?></b></h2> -->
 
             <form action="" method="post">
                 <div class="form-group has-feedback">
                     <input type="text" name="username" class="form-control" placeholder="Username"
                         value="<?php echo set_value('username'); ?>">
-                    <span class="glyphicon glyphicon-envelope form-control-feedback"></span>
+                    <span class="fa fa-user form-control-feedback"></span>
                     <?php echo form_error('username'); ?>
                 </div>
-                <div class="form-group has-feedback">
-                    <input type="password" name="password" class="form-control" placeholder="Password"
+                <div class="form-group has-feedback" style="position:relative;">
+                    <input type="password" name="password" id="password" class="form-control" placeholder="Password"
                         value="<?php echo set_value('password'); ?>">
-                    <span class="fa fa-lock form-control-feedback"></span>
+
+                    <!-- Eye Icon -->
+                    <span toggle="#password" 
+                        class="fa fa-eye toggle-password" 
+                        style="position:absolute; right:10px; top:10px; cursor:pointer;">
+                    </span>
+
                     <?php echo form_error('password'); ?>
                 </div>
                 <div class="row">
@@ -168,6 +177,20 @@
         close: true
     });
     </script>
+    <script>
+        $(document).on('click', '.toggle-password', function () {
+
+            $(this).toggleClass("fa-eye fa-eye-slash");
+
+            var input = $("#password");
+            if (input.attr("type") === "password") {
+                input.attr("type", "text");
+            } else {
+                input.attr("type", "password");
+            }
+
+        });
+        </script>
     <?php } ?>
 </body>
 
