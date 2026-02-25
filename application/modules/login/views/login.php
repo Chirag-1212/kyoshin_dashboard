@@ -97,8 +97,11 @@
         </div>
 
         <div class="login-box-body">
-        <img width="300px" src="<?php echo base_url().$site_settings->logo; ?>" alt="">
-            <h2 class="login-box-msg"><b><?php echo $site_settings->short_name; ?></b></h2>
+            <div class="login-box-msg">
+                 <img width="300px" src="<?php echo base_url().$site_settings->logo; ?>" alt="<?php echo $site_settings->short_name; ?>">
+            </div>
+           
+            <!-- <h2 class="login-box-msg"><b><?php echo $site_settings->short_name; ?></b></h2> -->
 
             <form action="" method="post">
                 <div class="form-group has-feedback">

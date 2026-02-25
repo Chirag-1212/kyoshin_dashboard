@@ -251,7 +251,7 @@
                     </div>
                 </div>
                 <div class="box-header with-border">
-                    <h3 class="box-title">Banking Hour</h3>
+                    <h3 class="box-title">Office Hour</h3>
                 </div>
 
                 <!-- /.card-header -->
@@ -309,14 +309,11 @@
                         </div>
                     </div>
                 </div>
-                <div class="box-header with-border">
+                <!-- <div class="box-header with-border">
                     <h3 class="box-title">Digital Help Desk Support Team</h3>
                 </div>
-
-                <!-- /.card-header -->
                 <div class="box-body">
                     <div class="row">
-                         <!-- /.col -->
                         <div class="col-md-4">
                             <div class="form-group">
                                 <div class="form-group">
@@ -345,17 +342,14 @@
                                     value="<?php echo (((isset($site_settings->help_address)) && $site_settings->help_address != '') ? $site_settings->help_address : '') ?>">
                             </div>
                         </div>
-                        <!-- /.col -->
                         <div class="col-md-4">
                             <div class="form-group">
-                                <!-- /.form-group -->
                                 <div class="form-group">
                                     <label>Mobile</label>
                                     <input type="text" name="help_mobile" class="form-control" id="help_mobile"
                                         placeholder="Mobile"
                                         value="<?php echo (((isset($site_settings->help_mobile)) && $site_settings->help_mobile != '') ? $site_settings->help_mobile : '') ?>">
                                 </div>
-                                <!-- /.form-group -->
                             </div>
                         </div>
                         <div class="col-md-4">
@@ -381,7 +375,6 @@
                         
                     </div>
                     <div class="row">
-                         <!-- /.col -->
                         <div class="col-md-4">
                             <div class="form-group">
                                 <div class="form-group">
@@ -401,7 +394,6 @@
                                     value="<?php echo (((isset($site_settings->help_address_np)) && $site_settings->help_address_np != '') ? $site_settings->help_address_np : '') ?>">
                             </div>
                         </div>
-                        <!-- /.col -->
                         <div class="col-md-4">
                             <div class="form-group">
                                 <div class="form-group">
@@ -434,7 +426,10 @@
                         </div>
                         
                     </div>
-                </div>
+                </div> -->
+
+
+
                 <div class="box-header with-border">
                     <h3 class="box-title">Images</h3>
                 </div>
