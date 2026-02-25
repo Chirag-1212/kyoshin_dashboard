@@ -14,28 +14,23 @@
                     <div class="box-tools">
                         <form action="" method="get">
                             <div class="input-group input-group-sm hidden-xs" style="width: 150px;">
-
                                 <input type="text" name="table_search" class="form-control pull-right"
                                     placeholder="Search"
-                                    value="<?php echo set_value('table_search', $this->input->get('table_search')); ?>">
+                                    value="<?php echo $this->input->get('table_search'); ?>">
                                 <div class="input-group-btn">
                                     <button type="submit" class="btn btn-default"><i class="fa fa-search"></i></button>
                                 </div>
-
                             </div>
                         </form>
                     </div>
                 </div>
-                <!-- /.box-header -->
                 <div class="box-body">
                     <table class="table table-bordered table-responsive">
                         <thead>
                             <tr>
                                 <th>ID</th>
-                                <th>Preview</th>
-                                <th>Main Title</th>
-                                <th>Section Tagline</th>
-                                <th>Date</th>
+                                <th>Title (EN)</th>
+                                <th>Title (JP)</th>
                                 <th>Status</th>
                                 <th>Action</th>
                             </tr>
@@ -46,16 +41,15 @@
                                     <tr>
                                         <td><?php echo $row->id; ?></td>
                                         <td>
-                                            <?php if ($row->DocPath != ''): ?>
-                                                <img src="<?php echo base_url($row->DocPath); ?>" 
+                                            <?php if ($row->docpath != ''): ?>
+                                                <img src="<?php echo base_url($row->docpath); ?>" 
                                                      style="width: 60px; height: 40px; object-fit: cover; border-radius: 4px; border: 1px solid #ddd;">
                                             <?php else: ?>
                                                 <span class="label label-default">No Image</span>
                                             <?php endif; ?>
                                         </td>
-                                        <td><strong><?php echo $row->Title; ?></strong></td>
-                                        <td><?php echo $row->Tagline; ?></td>
-                                        <td><?php echo date('M d, Y', strtotime($row->SubmitDt)); ?></td>
+                                        <td><strong><?php echo $row->title_en; ?></strong></td>
+                                        <td><?php echo $row->title_jp; ?></td>
                                         <td>
                                             <?php if ($row->status == 1): ?>
                                                 <span class="label label-success">Active</span>
@@ -79,7 +73,7 @@
                                 <?php endforeach; ?>
                             <?php else: ?>
                                 <tr>
-                                    <td colspan="7" class="text-center" style="padding: 20px;">
+                                    <td colspan="6" class="text-center" style="padding: 20px;">
                                         No records found. <a href="<?php echo base_url($redirect . '/admin/form'); ?>">Create one now</a>.
                                     </td>
                                 </tr>
@@ -91,6 +85,6 @@
                     <?php echo isset($pagination) ? $pagination : ''; ?>
                 </div>
             </div>
-            </div>
+        </div>
     </div>
 </section>
