@@ -79,8 +79,8 @@ class Admin extends Auth_controller
                 $update_data = [
                     'title_en'       => $this->input->post('title_en'),
                     'title_jp'       => $this->input->post('title_jp'),
-                    'Description'    => $this->input->post('Description'),
-                    'description_jp' => $this->input->post('description_jp'),
+                    'desc_en'        => $this->input->post('desc_en'),
+                    'desc_jp'        => $this->input->post('desc_jp'),
                     'docpath'        => $file_name,
                     'status'         => $this->input->post('status'),
                     'updated_on'     => date('Y-m-d H:i:s'),

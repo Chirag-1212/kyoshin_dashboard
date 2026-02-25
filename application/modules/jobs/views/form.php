@@ -79,7 +79,7 @@
 
                     <div class="box-footer">
                         <input type="hidden" name="id" value="<?php echo (((isset($detail->id)) && $detail->id != '') ? $detail->id : '') ?>">
-                        <button type="submit" class="btn btn-primary">Save Category</button>
+                        <button type="submit" class="btn btn-primary">Save</button>
                         <a href="<?php echo base_url($redirect.'/admin/all'); ?>" class="btn btn-default">Cancel</a>
                     </div>
                 </form>

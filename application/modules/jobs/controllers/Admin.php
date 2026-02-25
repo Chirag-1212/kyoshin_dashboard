@@ -11,16 +11,16 @@ class Admin extends Auth_controller
     public function __construct()
     {
         parent::__construct();
-        $this->table = 'job_categories'; // Change to your actual table name
-        $this->title = 'Job Categories';
-        $this->redirect = 'jobs';        // Change to your actual module route
+        $this->table = 'job_category'; // Updated to match your SQL
+        $this->title = 'Job Category';
+        $this->redirect = 'jobs'; 
         $this->userId = $this->data['userId'];
     }
 
     public function all($page = 0)
     {
         $like = [];
-        $param = ['status !=' => '2']; // 2 = Deleted
+        $param = ['status !=' => '2']; // Hide soft-deleted items
 
         if ($search = $this->input->get('table_search')) {
             $like['title_en'] = $search;
@@ -30,11 +30,11 @@ class Admin extends Auth_controller
         $total = $this->crud_model->total($this->table, $param, $like);
         
         $config = [
-            'base_url'    => base_url($this->redirect . '/admin/all'),
-            'total_rows'  => $total,
-            'per_page'    => 10,
-            'uri_segment' => 4,
-            'suffix'      => $search ? "?table_search=$search" : ''
+            'base_url'   => base_url($this->redirect . '/admin/all'),
+            'total_rows' => $total,
+            'per_page'   => 10,
+            'uri_segment'=> 4,
+            'suffix'     => $search ? "?table_search=$search" : ''
         ];
 
         $this->pagination->initialize($config);
@@ -76,26 +76,26 @@ class Admin extends Auth_controller
                     }
                 }
 
-                $save_data = [
-                    'title_en'       => $this->input->post('title_en'),
-                    'title_jp'       => $this->input->post('title_jp'),
-                    'Description'    => $this->input->post('Description'),
-                    'description_jp' => $this->input->post('description_jp'),
-                    'docpath'        => $file_name,
-                    'status'         => $this->input->post('status'),
-                    'updated_on'     => date('Y-m-d H:i:s'),
-                    'updated_by'     => $this->userId
+                $update_data = [
+                    'title_en'   => $this->input->post('title_en'),
+                    'title_jp'   => $this->input->post('title_jp'),
+                    'desc_en'    => $this->input->post('desc_en'),
+                    'desc_jp'    => $this->input->post('desc_jp'),
+                    'docpath'    => $file_name,
+                    'status'     => $this->input->post('status'), 
+                    'updated_on' => date('Y-m-d H:i:s'),
+                    'updated_by' => $this->userId
                 ];
 
                 if (empty($id)) {
-                    $save_data['created_on'] = date('Y-m-d H:i:s');
-                    $save_data['created_by'] = $this->userId;
-                    $this->crud_model->insert($this->table, $save_data);
+                    $update_data['created_on'] = date('Y-m-d H:i:s');
+                    $update_data['created_by'] = $this->userId;
+                    $this->crud_model->insert($this->table, $update_data);
                 } else {
-                    $this->crud_model->update($this->table, $save_data, ['id' => $id]);
+                    $this->crud_model->update($this->table, $update_data, ['id' => $id]);
                 }
 
-                $this->session->set_flashdata('success', 'Saved successfully');
+                $this->session->set_flashdata('success', 'Information updated successfully');
                 redirect($this->redirect . '/admin/all');
             }
         }
@@ -112,6 +112,7 @@ class Admin extends Auth_controller
 
     public function delete($id)
     {
+        // Using '2' for soft delete as per your ENUM schema
         $this->crud_model->update($this->table, ['status' => '2'], ['id' => $id]);
         $this->session->set_flashdata('success', 'Deleted successfully');
         redirect($this->redirect . '/admin/all');
