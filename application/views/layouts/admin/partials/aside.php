@@ -18,6 +18,12 @@
         </div>
 
         <ul class="sidebar-menu" data-widget="tree">
+            <li class="<?= ($uri1 == 'dashboard') ? 'active' : ''; ?>">
+                <a href="<?= base_url('dashboard'); ?>">
+                    <i class="fa fa-dashboard"></i>
+                    <span>Dashboard</span>
+                </a>
+            </li>
         <?php
         // Get all active menus
         $menus = $this->db->where('status', "1")->order_by('menu', 'ASC')->get('user_menu')->result();
