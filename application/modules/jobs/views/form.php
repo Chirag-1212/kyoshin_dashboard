@@ -31,14 +31,14 @@
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label>Description (English)</label>
-                                    <textarea name="Description" id="content_en" class="form-control" rows="5" 
+                                    <textarea name="desc_en" id="content_en" class="form-control" rows="5" 
                                         placeholder="Write English description here..."><?php echo (((isset($detail->Description)) && $detail->Description != '') ? $detail->Description : '') ?></textarea>
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label>Description (Japanese)</label>
-                                    <textarea name="description_jp" id="content_jp" class="form-control" rows="5" 
+                                    <textarea name="desc_jp" id="content_jp" class="form-control" rows="5" 
                                         placeholder="Write Japanese description here..."><?php echo (((isset($detail->description_jp)) && $detail->description_jp != '') ? $detail->description_jp : '') ?></textarea>
                                 </div>
                             </div>
@@ -46,11 +46,7 @@
 
                         <div class="box-header with-border" style="padding-left: 0;">
                             <h3 class="box-title">Media & Status</h3>
-                        </div> 
-
-
-
-                        
+                        </div>                         
 
                         <div class="row">
                             <div class="col-md-6">

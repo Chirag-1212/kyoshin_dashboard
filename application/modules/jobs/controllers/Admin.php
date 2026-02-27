@@ -57,6 +57,7 @@ class Admin extends Auth_controller
     {
         if ($this->input->post()) {
             $this->form_validation->set_rules('title_en', 'Title', 'required|trim');
+            $this->form_validation->set_rules('desc_en', 'Description', 'required');
 
             if ($this->form_validation->run()) {
                 $id = $this->input->post('id');

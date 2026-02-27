@@ -31,21 +31,21 @@
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label>Description (English)</label>
-                                    <textarea name="Description" id="content_en" class="form-control" rows="10" 
-                                        placeholder="Write English description here..."><?php echo (((isset($detail->Description)) && $detail->Description != '') ? $detail->Description : '') ?></textarea>
+                                    <textarea name="desc_en" id="content_en" class="form-control" rows="10" 
+                                        placeholder="Write English description here..."><?php echo (((isset($detail->desc_en)) && $detail->desc_en != '') ? $detail->desc_en : '') ?></textarea>
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label>Description (Japanese)</label>
-                                    <textarea name="description_jp" id="content_jp" class="form-control" rows="10" 
-                                        placeholder="Write Japanese description here..."><?php echo (((isset($detail->description_jp)) && $detail->description_jp != '') ? $detail->description_jp : '') ?></textarea>
+                                    <textarea name="desc_jp" id="content_jp" class="form-control" rows="10" 
+                                        placeholder="Write Japanese description here..."><?php echo (((isset($detail->desc_jp)) && $detail->desc_jp != '') ? $detail->desc_jp : '') ?></textarea>
                                 </div>
                             </div>
                         </div>
 
                         <div class="box-header with-border" style="padding-left: 0;">
-                            <h3 class="box-title">Media</h3>
+                            <h3 class="box-title">Media & Status</h3>
                         </div>
 
                         <div class="row">
@@ -60,9 +60,16 @@
                                                  style="max-width: 200px; border: 1px solid #ddd; padding: 5px;">
                                             <input type="hidden" name="old_docpath" value="<?php echo $detail->docpath; ?>">
                                         </div>
-                                    <?php } else { ?>
-                                        <img src="" class="img_cl" id="preview_doc" style="display:none; max-width: 200px; margin-top:10px;">
                                     <?php } ?>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>Status</label>
+                                    <select name="status" class="form-control">
+                                        <option value="1" <?php echo (isset($detail->status) && $detail->status == '1') ? 'selected' : ''; ?>>Active</option>
+                                        <option value="0" <?php echo (isset($detail->status) && $detail->status == '0') ? 'selected' : ''; ?>>Inactive</option>
+                                    </select>
                                 </div>
                             </div>
                         </div>
