@@ -23,14 +23,10 @@
                                 <th>S.N.</th>
                                 <th>Full Name</th>
                                 <th>Role</th>
-                                <!--<th>Perm Address</th>-->
-                                <!--<th>Temp Address</th>-->
                                 <th>Contact</th>
                                 <th>Email</th>
-                                <!-- <th>Nationality</th> -->
-                                <th>Designation</th>
-                                <th>Depart</th>
-                                <th>Appointed Date</th>
+                                <th>Username</th>
+                                <th>Created</th>
                                 <th>status</th>
                                 <th>Action</th>
                             </tr>
@@ -124,9 +120,10 @@
                                 <td><?php if (isset($staff_detail->email)) {
                             echo $staff_detail->email;
                           } ?></td>
-                                <!-- <td><?php echo $nationality ?></td> -->
-                                <td><?php echo $desig; ?></td>
-                                <td><?php echo $depart; ?></td>
+                               <td><?php if (isset($value->user_name)) {
+                                    echo $value->user_name;
+                                } ?></td>
+                               
                                 <td><?php if (isset($staff_detail->appointed_date)) {
                             echo $staff_detail->appointed_date;
                           } ?></td>
