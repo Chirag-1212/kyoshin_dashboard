@@ -42,3 +42,23 @@ CREATE TABLE `job_category` (
 ALTER TABLE `job_category`
 ADD COLUMN `slug` VARCHAR(191) DEFAULT NULL,
 ADD UNIQUE KEY `slug` (`slug`);
+
+CREATE TABLE `our_courses` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `title_en` varchar(255) DEFAULT NULL,
+  `title_jp` varchar(255) DEFAULT NULL,
+  `slug` varchar(191) NOT NULL,
+  `sub_level` varchar(255) DEFAULT NULL,
+  `sub_text_en` varchar(255) DEFAULT NULL,
+  `sub_text_jp` varchar(255) DEFAULT NULL,
+  `desc_en` text DEFAULT NULL,
+  `desc_jp` text DEFAULT NULL,
+  `docpath` varchar(255) DEFAULT NULL,
+  `status` tinyint(1) DEFAULT 1,
+  `created_on` datetime DEFAULT NULL,
+  `created_by` int(11) DEFAULT NULL,
+  `updated_on` datetime DEFAULT NULL,
+  `updated_by` int(11) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `slug` (`slug`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
