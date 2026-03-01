@@ -26,9 +26,9 @@
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label>Title Nepali</label>
+                                    <label>Title Japanese</label>
                                     <input type="text" name="PageTitleNepali" class="form-control" id="PageTitleNepali"
-                                        placeholder="PageTitleNepali"
+                                        placeholder="PageTitle Japanese"
                                         value="<?php echo (((isset($detail->PageTitleNepali)) && $detail->PageTitleNepali != '') ? $detail->PageTitleNepali : '') ?>">
                                 </div>
                             </div>
@@ -69,7 +69,7 @@
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label>Description Nepali</label>
+                                    <label>Description Japanese</label>
                                     <textarea name="DescriptionNepali" id="DescriptionNepali" class="form-control"
                                         rows="5" cols="80"
                                         autocomplete="off"><?php echo (((isset($detail->DescriptionNepali)) && $detail->DescriptionNepali != '') ? $detail->DescriptionNepali : '') ?></textarea>

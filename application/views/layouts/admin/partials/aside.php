@@ -24,6 +24,15 @@
                     <span>Dashboard</span>
                 </a>
             </li>
+            <?php if ($role_id === 1 || $role_id === 2 ): ?>
+                <li class="<?= ($uri3 == 'menu') ? 'active' : ''; ?>">
+                    <a href="<?= base_url('content/admin/menu'); ?>">
+                        <i class="fa fa-bars"></i>
+                        <span>Menu</span>
+                    </a>
+                </li>
+            <?php endif; ?>
+
         <?php
         // Get all active menus
         $menus = $this->db->where('status', "1")->order_by('menu', 'ASC')->get('user_menu')->result();
