@@ -4,11 +4,7 @@
             <div class="box">
                 <div class="box-header">
                     <h3 class="box-title">
-                        <?php
-                        $check_form = $this->crud_model->get_module_function_for_role($redirect, $form_check_value);
-                        if ($check_form == true) { ?>
                         <a href="<?php echo base_url($form_link); ?>" class="btn btn-sm btn-primary">Add New</a>
-                        <?php } ?>
                     </h3>
                     <div class="box-tools">
                         <form action="" method="get">
@@ -28,6 +24,7 @@
                                 <th style="width: 10px">ID</th>
                                 <th>Image</th>
                                 <th>Title (EN)</th>
+                                <th>Title (JP)</th>
                                 <th>Status</th>
                                 <th style="width: 100px">Action</th>
                             </tr>
@@ -45,6 +42,7 @@
                                         <?php endif; ?>
                                     </td>
                                     <td><?php echo $row->title_en; ?></td>
+                                    <td><?php echo $row->title_jp; ?></td>
                                     <td>
                                         <?php if ($row->status == '1'): ?>
                                             <span class="label label-success">Active</span>
@@ -59,7 +57,7 @@
                                 </tr>
                                 <?php endforeach; ?>
                             <?php else: ?>
-                                <tr><td colspan="5" class="text-center">No data found</td></tr>
+                                <tr><td colspan="6" class="text-center">No data found</td></tr>
                             <?php endif; ?>
                         </tbody>
                     </table>
