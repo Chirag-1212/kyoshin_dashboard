@@ -1,99 +1,57 @@
 <section class="content">
-    <div class="row">
-        <div class="col-md-12">
-            <div class="box">
-                <div class="box-header">
-                    <h3 class="box-title">
-                        <?php 
-                        $check_form = $this->crud_model->get_module_function_for_role($redirect, $form_check_value);
-                        if ($check_form == true) {
-                        ?>
-                        <a href="<?php echo base_url($form_link); ?>" class="btn btn-sm btn-primary">Add New</a>
-                        <?php } ?>
-                    </h3>
-                    <div class="box-tools">
-                        <form action="" method="get">
-                            <div class="input-group input-group-sm hidden-xs" style="width: 150px;">
-
-                                <input type="text" name="table_search" class="form-control pull-right"
-                                    placeholder="Search"
-                                    value="<?php echo set_value('table_search', $this->input->get('table_search')); ?>">
-                                <div class="input-group-btn">
-                                    <button type="submit" class="btn btn-default"><i class="fa fa-search"></i></button>
-                                </div>
-
-                            </div>
-                        </form>
-                    </div>
-                </div>
-                <!-- /.box-header -->
-                <div class="box-body">
-                    <table class="table table-bordered table-responsive">
-                        <thead>
-                            <tr>
-                                <th>#</th>
-                                <th>Title</th>
-                                <th>Category</th>
-                                <th>Status</th>
-                                <th>Action</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-
-                            <?php
-                            if ($items) {
-                                $i = 1;
-                            foreach ($items as $key => $value) {
-                                $offset = $offset + $i;
-                                if ($value->status == '1') {
-                                $status = 'Active';
-                                } else {
-                                $status = 'Inactive';
-                                }
-                                if ($value->parent_id > 0) {
-                                $parent =  $this->db->get_where('service_category', array('id' => $value->parent_id))->row()->Title;
-                                } else {
-                                $parent = 'Main Category';
-                                }
-                            ?>
-                            <tr>
-                                <td><?php echo $offset; ?></td>
-                                <td><?php echo $value->Title; ?></td>
-                                <td><?php echo $parent; ?></td>
-                                <td><?php echo $status; ?></td>
-                                <td>
-                                    <?php
-                                        if ($check_form == true) {
-                                        ?>
-                                    <a href="<?php echo base_url($form_link . $value->id); ?>"
-                                        class="btn btn-sm btn-primary" style="margin: 5px;">Edit</a>
-                                    <?php } ?>
-                                    <?php
-                                    $check_soft_delete = $this->crud_model->get_module_function_for_role($redirect, $delete_check_value);
-                                    if ($check_soft_delete == true) {
-                                    ?>
-                                    <a href="<?php echo base_url($delete_link . $value->id); ?>"
-                                        class="btn btn-sm btn-danger" style="margin: 5px;">Delete</a>
-                                    <?php } ?>
-                                </td>
-                            </tr>
-                            <?php }
-                                } else { ?>
-
-                            <tr>
-                                <td colspan="9" style="text-align:center;">No Records Found</td>
-                            </tr>
-                            <?php } ?>
-                        </tbody>
-                    </table>
-                    <!-- /.box-body -->
-                    <?php if ($items) { ?>
-                    <div class="box-footer clearfix">
-                        <?php echo $pagination; ?>
-                    </div>
-                    <?php } ?>
+    <div class="container-fluid">
+        <?php $this->load->view('search'); ?>
+        <div class="card card-primary">
+            <div class="card-header">
+                <h3 class="card-title"><?php echo $title; ?> Management</h3>
+                <div class="card-tools">
+                    <a href="<?php echo base_url($redirect . '/admin/form'); ?>" class="btn btn-primary btn-sm">
+                        <i class="fas fa-plus"></i> Add New
+                    </a>
                 </div>
             </div>
+            <div class="card-body table-responsive p-0">
+                <table class="table table-hover table-bordered table-striped">
+                    <thead>
+                        <tr class="bg-light">
+                            <th style="width: 60px; text-align: center;">SN</th>
+                            <th>Category Title</th>
+                            <th>Slug</th>
+                            <th style="width: 100px; text-align: center;">Status</th>
+                            <th style="width: 150px; text-align: center;">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php if (!empty($items)): 
+                            $sn = $offset + 1; 
+                            foreach ($items as $row): ?>
+                            <tr>
+                                <td class="text-center"><?php echo $sn++; ?></td>
+                                <td><strong><?php echo $row->title; ?></strong></td>
+                                <td><small class="text-muted"><?php echo $row->slug; ?></small></td>
+                                <td class="text-center">
+                                    <?php echo ($row->status == '1') ? 
+                                        '<span class="badge badge-success">Active</span>' : 
+                                        '<span class="badge badge-warning">Inactive</span>'; ?>
+                                </td>
+                                <td class="text-center">
+                                    <div class="btn-group">
+                                        <a href="<?php echo base_url($redirect . '/admin/form/' . $row->id); ?>" class="btn btn-sm btn-outline-primary">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+                                        <a href="<?php echo base_url($redirect . '/admin/soft_delete/' . $row->id); ?>" class="btn btn-sm btn-outline-danger" onclick="return confirm('Delete this category?')">
+                                            <i class="fas fa-trash"></i>
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                        <?php endforeach; else: ?>
+                            <tr><td colspan="5" class="text-center p-4">No records found.</td></tr>
+                        <?php endif; ?>
+                    </tbody>
+                </table>
+            </div>
+            <div class="card-footer clearfix"><?php echo $pagination; ?></div>
         </div>
     </div>
 </section>
