@@ -16,6 +16,31 @@
                         <input type="text" name="title_nepali" class="form-control" value="<?php echo @$detail->title_nepali; ?>">
                     </div>
 
+                    <div class="col-md-6 form-group">
+                        <label>category</label>
+                        <select name="category_id" id="category_id" class="form-control" required>
+                            <option value="">-- select category --</option>
+                            <?php foreach ($categories as $cat): ?>
+                                <option value="<?php echo $cat->id; ?>" <?php echo (@$detail->category_id == $cat->id) ? 'selected' : ''; ?>>
+                                    <?php echo $cat->name; ?>
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+                    <div class="col-md-6 form-group">
+                        <label>sub-topic (heading)</label>
+                        <select name="sub_category_id" id="sub_category_id" class="form-control">
+                            <option value="">-- select sub-topic --</option>
+                            <?php if (!empty($sub_categories)): ?>
+                                <?php foreach ($sub_categories as $sub): ?>
+                                    <option value="<?php echo $sub->id; ?>" <?php echo (@$detail->sub_category_id == $sub->id) ? 'selected' : ''; ?>>
+                                        <?php echo $sub->name; ?>
+                                    </option>
+                                <?php endforeach; ?>
+                            <?php endif; ?>
+                        </select>
+                    </div>
+
                     <div class="col-md-3 form-group">
                         <label>news date</label>
                         <input type="date" name="datevalue" class="form-control" value="<?php echo @$detail->datevalue; ?>">
@@ -64,3 +89,29 @@
         </form>
     </div>
 </section>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+$(document).ready(function() {
+    $('#category_id').change(function() {
+        var parent_id = $(this).val();
+        if (parent_id != "") {
+            $.ajax({
+                url: "<?php echo base_url($redirect . '/admin/get_sub_categories'); ?>",
+                method: "POST",
+                data: { parent_id: parent_id },
+                dataType: "JSON",
+                success: function(data) {
+                    var html = '<option value="">-- select sub-topic --</option>';
+                    $.each(data, function(key, val) {
+                        html += '<option value="' + val.id + '">' + val.name + '</option>';
+                    });
+                    $('#sub_category_id').html(html);
+                }
+            });
+        } else {
+            $('#sub_category_id').html('<option value="">-- select sub-topic --</option>');
+        }
+    });
+});
+</script>

@@ -135,3 +135,52 @@ CREATE TABLE news_images (
     status TINYINT(1) DEFAULT 1,
     created_on DATETIME
 );
+
+-- Create a categories table
+CREATE TABLE news_categories (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    parent_id INT DEFAULT 0, -- Use this for sub-topics
+    status ENUM('0', '1', '2') DEFAULT '1'
+);
+
+ALTER TABLE news 
+ADD COLUMN category_id INT AFTER id,
+MODIFY COLUMN is_slider ENUM('1', '2') NOT NULL DEFAULT '2',
+MODIFY COLUMN imp_notice ENUM('1', '2') NOT NULL DEFAULT '2',
+MODIFY COLUMN status ENUM('0', '1', '2') NOT NULL DEFAULT '1';
+
+ALTER TABLE news_categories 
+ADD COLUMN created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+ADD COLUMN updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP;
+
+ALTER TABLE news 
+ADD COLUMN sub_topic VARCHAR(255) AFTER category_id,
+MODIFY COLUMN is_slider ENUM('1', '2') NOT NULL DEFAULT '2',
+MODIFY COLUMN imp_notice ENUM('1', '2') NOT NULL DEFAULT '2',
+MODIFY COLUMN status ENUM('0', '1', '2') NOT NULL DEFAULT '1';
+
+-- Main gallery table
+CREATE TABLE gallery (
+    id INT(11) NOT NULL AUTO_INCREMENT,
+    title VARCHAR(255) NOT NULL,
+    title_nepali VARCHAR(255) DEFAULT NULL,
+    description TEXT DEFAULT NULL,
+    coverimage VARCHAR(255) DEFAULT NULL,
+    status ENUM('0', '1', '2') DEFAULT '1' COMMENT '0: Inactive, 1: Active, 2: Soft Delete',
+    created DATE DEFAULT NULL,
+    created_by INT(11) DEFAULT NULL,
+    updated DATE DEFAULT NULL,
+    updated_by INT(11) DEFAULT NULL,
+    PRIMARY KEY (id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- Multi-image storage for gallery
+CREATE TABLE gallery_images (
+    id INT(11) NOT NULL AUTO_INCREMENT,
+    gallery_id INT(11) NOT NULL,
+    docpath VARCHAR(255) NOT NULL,
+    status ENUM('0', '1', '2') DEFAULT '1',
+    created_on DATETIME DEFAULT NULL,
+    PRIMARY KEY (id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
