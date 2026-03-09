@@ -7,7 +7,7 @@
                 </h3>
                 <button type="button" class="btn btn-sm btn-primary" data-toggle="modal" data-target="#myModalAdd"
                     style="margin-left: 10px;"><i class=" fa fa-plus-circle" aria-hidden="true"></i></button>
-                <a href="<?php echo base_url('content/admin/all/em'); ?>" type="button" class="btn btn-sm btn-primary"
+                <a href="<?php echo base_url('content/admin/all'); ?>" type="button" class="btn btn-sm btn-primary"
                     style="margin-left: 10px;"><i class=" fa fa-list " aria-hidden="true"></i></a>
 
                 <!-- Modal -->
@@ -34,9 +34,9 @@
                                         </div>
                                         <div class="col-md-6">
                                             <div class="form-group">
-                                                <label>Title Nepali</label>
+                                                <label>Title Japanese</label>
                                                 <input type="text" name="PageTitleNepali" class="form-control"
-                                                    id="PageTitleNepali" placeholder="PageTitleNepali"
+                                                    id="PageTitleNepali" placeholder="PageTitle Japanese"
                                                     value="<?php echo (((isset($detail->PageTitleNepali)) && $detail->PageTitleNepali != '') ? $detail->PageTitleNepali : '') ?>">
                                             </div>
                                         </div>
@@ -134,9 +134,9 @@
                                         </div>
                                         <div class="col-md-6">
                                             <div class="form-group">
-                                                <label>Title Nepali</label>
+                                                <label>Title Japanese</label>
                                                 <input type="text" name="PageTitleNepali" class="form-control"
-                                                    id="PageTitleNepali" placeholder="PageTitleNepali"
+                                                    id="PageTitleNepali" placeholder="PageTitle Japanese"
                                                     value="<?php echo (((isset($detail->PageTitleNepali)) && $detail->PageTitleNepali != '') ? $detail->PageTitleNepali : '') ?>">
                                             </div>
                                         </div>

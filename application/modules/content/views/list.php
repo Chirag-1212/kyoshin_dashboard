@@ -6,10 +6,10 @@
                 <div class="box-header">
                     <h3 class="box-title">
                         <?php
-                        $check_content_form = $this->crud_model->get_module_function_for_role('content', 'add');
+                        $check_content_form = $this->crud_model->get_module_function_for_role('content', 'form');
                         if ($check_content_form == true) {
                         ?>
-                        <a href="<?php echo base_url('content/admin/add/'); ?>" class="btn btn-sm btn-primary">Add
+                        <a href="<?php echo base_url('content/admin/form/'); ?>" class="btn btn-sm btn-primary">Add
                             New</a>
                         <?php } ?>
                     </h3>

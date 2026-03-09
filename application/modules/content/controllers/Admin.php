@@ -13,7 +13,7 @@ class Admin extends Auth_controller
 		parent::__construct();
 		// var_dump($this->current_user);exit;
 		$this->load->library('form_validation');
-		$this->table = 'content';
+		$this->table = 'tbl_content';
 		$this->redirect = 'content/admin/';
 		$this->title = 'Content';
 		$this->module = 'Content';
@@ -174,7 +174,7 @@ class Admin extends Auth_controller
 		$this->load->view('layouts/admin/index', $data);
 	}
 	
-	public function add()
+	public function form()
 	{	
 		$doc_path='uploads/content/';
 		if ($this->input->post()) {
