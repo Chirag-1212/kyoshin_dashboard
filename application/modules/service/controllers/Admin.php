@@ -78,7 +78,7 @@ class Admin extends Auth_controller
         $data = array_merge($this->data, [
             'title' => $this->title,
             'page' => 'list',
-            'items' => $items,
+            'list' => $items,
             'redirect' => $this->redirect,
             'form_link' => $this->redirect . '/admin/form/',
             'delete_link' => $this->redirect . '/admin/soft_delete/',

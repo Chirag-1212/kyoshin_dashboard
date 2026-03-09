@@ -31,7 +31,7 @@
                     </div>
                     <div class="col-md-12">
                         <div class="form-group">
-                            <label>Description (Japanese/Nepali)</label>
+                            <label>Description (Japanese)</label>
                             <textarea name="desc_jp" class="form-control editor"><?php echo @$detail->desc_jp; ?></textarea>
                         </div>
                     </div>

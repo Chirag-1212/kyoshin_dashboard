@@ -13,12 +13,12 @@
             <table class="table table-hover table-bordered">
                 <thead>
                     <tr class="bg-gray">
-                        <th style="width: 50px; text-align: center;">#</th>
-                        <th style="width: 80px; text-align: center;">Image</th>
+                        <th>SN</th>
+                        <th>Image</th>
                         <th>Course Name</th>
                         <th>Sub-Level</th>
-                        <th style="width: 100px; text-align: center;">Status</th>
-                        <th style="width: 110px; text-align: center;">Action</th>
+                        <th>Status</th>
+                        <th>Action</th>
                     </tr>
                 </thead>
                 <tbody>

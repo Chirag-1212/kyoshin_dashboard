@@ -100,3 +100,38 @@ CREATE TABLE `service_category` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `slug` (`slug`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+ALTER TABLE `service` 
+ADD CONSTRAINT `fk_service_to_category` 
+FOREIGN KEY (`service_category_id`) REFERENCES `service_category`(`id`) 
+ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- Main news table
+CREATE TABLE news (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    title VARCHAR(255),
+    title_nepali VARCHAR(255),
+    slug VARCHAR(255),
+    description TEXT,
+    description_nepali TEXT,
+    datevalue DATE,
+    due_date DATE,
+    docpath VARCHAR(255),
+    coverimage VARCHAR(255),
+    is_slider ENUM('1', '2') NOT NULL DEFAULT '2',
+    imp_notice ENUM('1', '2') NOT NULL DEFAULT '2',
+    status ENUM('0', '1', '2') NOT NULL DEFAULT '1',
+    created_on DATETIME,
+    created_by INT,
+    updated_on DATE,
+    updated_by INT
+);
+
+-- News gallery images table
+CREATE TABLE news_images (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    news_id INT,
+    docpath VARCHAR(255),
+    status TINYINT(1) DEFAULT 1,
+    created_on DATETIME
+);

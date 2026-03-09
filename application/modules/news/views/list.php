@@ -1,93 +1,78 @@
 <section class="content">
-    <div class="row">
-        <div class="col-md-12">
-            <div class="box">
-                <div class="box-header">
-                    <h3 class="box-title">
-                        <?php
-                        $check_form = $this->crud_model->get_module_function_for_role($redirect, $form_check_value);
-                        if ($check_form == true) {
+    <div class="box">
+        <div class="box-header with-border">
+            <h3 class="box-title"><?php echo $title; ?> List</h3>
+            <div class="box-tools">
+                <a href="<?php echo base_url($form_link); ?>" class="btn btn-sm btn-primary">
+                    <i class="fa fa-plus"></i> Add New
+                </a>
+            </div>
+        </div>
+        
+        <div class="box-body table-responsive no-padding">
+            <table class="table table-hover table-bordered">
+                <thead>
+                    <tr class="bg-gray">
+                        <th style="width: 50px; text-align: center;">SN</th>
+                        <th style="width: 100px;">Cover</th>
+                        <th>Title</th>
+                        <th>Date</th>
+                        <th style="text-align: center;">Status</th>
+                        <th style="text-align: center;">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php if (!empty($list)): ?>
+                        <?php 
+                        $i = $this->uri->segment(4) ? $this->uri->segment(4) + 1 : 1;
+                        foreach ($list as $row): 
                         ?>
-                        <a href="<?php echo base_url($form_link); ?>" class="btn btn-sm btn-primary">Add New</a>
-                        <?php } ?>
-                    </h3>
-                    <div class="box-tools">
-                        <form action="" method="get">
-                            <div class="input-group input-group-sm hidden-xs" style="width: 150px;">
-                                <input type="text" name="table_search" class="form-control pull-right"
-                                    value="<?php echo set_value('table_search', $this->input->get('table_search')); ?>"
-                                    placeholder="Search">
-                                <div class="input-group-btn">
-                                    <button type="submit" class="btn btn-default"><i class="fa fa-search"></i></button>
+                        <tr>
+                            <td style="text-align: center; vertical-align: middle;"><?php echo $i++; ?></td>
+                            <td style="text-align: center; vertical-align: middle;">
+                                <?php if(!empty($row->coverimage)): ?>
+                                    <img src="<?php echo base_url($row->coverimage); ?>" style="height: 40px; width: 60px; object-fit: cover; border: 1px solid #ddd;">
+                                <?php else: ?>
+                                    <i class="fa fa-file-image-o fa-2x text-muted"></i>
+                                <?php endif; ?>
+                            </td>
+                            <td style="vertical-align: middle;">
+                                <strong><?php echo $row->title; ?></strong>
+                            </td>
+                            <td style="vertical-align: middle;"><?php echo $row->datevalue; ?></td>
+                            <td style="text-align: center; vertical-align: middle;">
+                                <?php if ($row->status == '1'): ?>
+                                    <span class="label label-success">Active</span>
+                                <?php elseif ($row->status == '0'): ?>
+                                    <span class="label label-warning">Inactive</span>
+                                <?php else: ?>
+                                    <span class="label label-danger">Deleted</span>
+                                <?php endif; ?>
+                            </td>
+                            <td style="text-align: center; vertical-align: middle;">
+                                <div class="btn-group">
+                                    <a href="<?php echo base_url($form_link . $row->id); ?>" class="btn btn-sm btn-default">
+                                        <i class="fa fa-pencil text-primary"></i>
+                                    </a>
+                                    <a href="<?php echo base_url($delete_link . $row->id); ?>" class="btn btn-sm btn-default" onclick="return confirm('Are you sure?')">
+                                        <i class="fa fa-trash text-danger"></i>
+                                    </a>
                                 </div>
+                            </td>
+                        </tr>
+                        <?php endforeach; ?>
+                    <?php else: ?>
+                        <tr>
+                            <td colspan="6" class="text-center" style="padding: 20px;">No records found.</td>
+                        </tr>
+                    <?php endif; ?>
+                </tbody>
+            </table>
+        </div>
 
-                            </div>
-                        </form>
-                    </div>
-                </div>
-                <!-- /.box-header -->
-                <div class="box-body table-responsive no-padding">
-                    <table class="table table-bordered table-responsive">
-                        <thead>
-                            <tr>
-                                <th>S.N.</th>
-                                <th>Title</th>
-                                <th>Status</th>
-                                <th>Action</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-
-                            <?php
-                if ($items) {
-                    $i = 1;
-                    foreach ($items as $key => $value) {
-                        $offset = $offset + $i;
-                        if ($value->status == '1') {
-                        $status = '<span class="label label-success">Active</span>';
-                        } else {
-                        $status = '<span class="label label-danger">Inactive</span>';
-                        }
-                ?>
-                            <tr>
-                                <td><?php echo $offset; ?></td>
-                                <td><?php echo $value->Title; ?></td>
-                                <td><?php echo $status; ?></td>
-                                <td>
-                                    <?php
-                        if ($check_form == true) {
-                        ?>
-                                    <a href="<?php echo base_url($form_link . $value->id); ?>"
-                                        class="btn btn-sm btn-primary" class="btn bg-purple btn-flat margin"><i
-                                            class="fa fa-edit"></i></a>
-                                    <?php } ?>
-                                    <?php
-                        $check_soft_delete = $this->crud_model->get_module_function_for_role($redirect, $delete_check_value);
-                        
-                        if ($check_soft_delete) {
-                        ?>
-                                    <a href="<?php echo base_url($delete_link . $value->id); ?>"
-                                        class="btn btn-sm btn-danger" class="btn bg-danger btn-flat margin"><i
-                                            class="fa fa-trash-o"></i></a>
-                                    <?php } ?>
-                                </td>
-                            </tr>
-                            <?php }
-                } else { ?>
-
-                            <tr>
-                                <td colspan="9" style="text-align:center;">No Records Found</td>
-                            </tr>
-                            <?php } ?>
-                        </tbody>
-                    </table>
-                    <!-- /.box-body -->
-                    <?php if ($items) { ?>
-                    <div class="box-footer clearfix">
-                        <?php echo $pagination; ?>
-                    </div>
-                    <?php } ?>
-                </div>
+        <div class="box-footer clearfix">
+            <div class="pull-right">
+                <?php echo $pagination; ?>
             </div>
         </div>
     </div>
