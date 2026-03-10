@@ -25,15 +25,14 @@
                     </div>
                 </div>
                 <div class="box-body">
-                    <table class="table table-bordered table-hover">
+                    <table class="table table-bordered table-responsive">
                         <thead>
                             <tr>
-                                <th style="width: 50px;">ID</th>
-                                <th style="width: 100px;">Image</th>
+                                <th>ID</th>
                                 <th>Title (EN)</th>
                                 <th>Title (JP)</th>
-                                <th style="width: 80px;">Status</th>
-                                <th style="width: 100px; text-align: center;">Action</th>
+                                <th>Status</th>
+                                <th>Action</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -42,7 +41,7 @@
                                     <tr>
                                         <td><?php echo $row->id; ?></td>
                                         <td>
-                                            <?php if (!empty($row->docpath)): ?>
+                                            <?php if ($row->docpath != ''): ?>
                                                 <img src="<?php echo base_url($row->docpath); ?>" 
                                                      style="width: 60px; height: 40px; object-fit: cover; border-radius: 4px; border: 1px solid #ddd;">
                                             <?php else: ?>
@@ -63,7 +62,7 @@
                                                class="btn btn-xs btn-primary" title="Edit">
                                                 <i class="fa fa-pencil"></i>
                                             </a>
-                                            <a href="<?php echo base_url($redirect . '/admin/soft_delete/' . $row->id); ?>" 
+                                            <a href="<?php echo base_url($redirect . '/admin/delete/' . $row->id); ?>" 
                                                class="btn btn-xs btn-danger" 
                                                onclick="return confirm('Are you sure you want to delete this content?');" 
                                                title="Delete">
