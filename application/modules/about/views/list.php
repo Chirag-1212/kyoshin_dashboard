@@ -28,7 +28,8 @@
                     <table class="table table-bordered table-responsive">
                         <thead>
                             <tr>
-                                <th>ID</th>
+                                <th>SN</th>
+                                <th>Image</th>
                                 <th>Title (EN)</th>
                                 <th>Title (JP)</th>
                                 <th>Status</th>
