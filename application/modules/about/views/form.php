@@ -14,7 +14,7 @@
                                     <label>Title (English)</label>
                                     <input type="text" name="title_en" class="form-control" id="title_en"
                                         placeholder="Enter English Title"
-                                        value="<?php echo (((isset($detail->title_en)) && $detail->title_en != '') ? $detail->title_en : '') ?>">
+                                        value="<?php echo isset($detail->title_en) ? $detail->title_en : ''; ?>">
                                 </div>
                             </div>
                             <div class="col-md-6">
@@ -22,7 +22,7 @@
                                     <label>Title (Japanese)</label>
                                     <input type="text" name="title_jp" class="form-control" id="title_jp"
                                         placeholder="Enter Japanese Title"
-                                        value="<?php echo (((isset($detail->title_jp)) && $detail->title_jp != '') ? $detail->title_jp : '') ?>">
+                                        value="<?php echo isset($detail->title_jp) ? $detail->title_jp : ''; ?>">
                                 </div>
                             </div>
                         </div>
@@ -32,14 +32,14 @@
                                 <div class="form-group">
                                     <label>Description (English)</label>
                                     <textarea name="desc_en" id="content_en" class="form-control" rows="10" 
-                                        placeholder="Write English description here..."><?php echo (((isset($detail->desc_en)) && $detail->desc_en != '') ? $detail->desc_en : '') ?></textarea>
+                                        placeholder="Write English description here..."><?php echo isset($detail->desc_en) ? $detail->desc_en : ''; ?></textarea>
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label>Description (Japanese)</label>
                                     <textarea name="desc_jp" id="content_jp" class="form-control" rows="10" 
-                                        placeholder="Write Japanese description here..."><?php echo (((isset($detail->desc_jp)) && $detail->desc_jp != '') ? $detail->desc_jp : '') ?></textarea>
+                                        placeholder="Write Japanese description here..."><?php echo isset($detail->desc_jp) ? $detail->desc_jp : ''; ?></textarea>
                                 </div>
                             </div>
                         </div>
@@ -54,11 +54,12 @@
                                     <label>Featured Image</label>
                                     <input type="file" name="docpath" class="form-control" id="docpath">
                                     
-                                    <?php if ((isset($detail->docpath)) && $detail->docpath != '') { ?>
+                                    <input type="hidden" name="old_docpath" value="<?php echo isset($detail->docpath) ? $detail->docpath : ''; ?>">
+                                    
+                                    <?php if (!empty($detail->docpath)) { ?>
                                         <div style="margin-top: 10px;">
-                                            <img src="<?php echo base_url().$detail->docpath; ?>" class="img_cl" 
+                                            <img src="<?php echo base_url($detail->docpath); ?>" class="img_cl" 
                                                  style="max-width: 200px; border: 1px solid #ddd; padding: 5px;">
-                                            <input type="hidden" name="old_docpath" value="<?php echo $detail->docpath; ?>">
                                         </div>
                                     <?php } ?>
                                 </div>
@@ -76,7 +77,7 @@
                     </div>
 
                     <div class="box-footer">
-                        <input type="hidden" name="id" value="<?php echo (((isset($detail->id)) && $detail->id != '') ? $detail->id : '') ?>">
+                        <input type="hidden" name="id" value="<?php echo isset($detail->id) ? $detail->id : ''; ?>">
                         <button type="submit" class="btn btn-primary">Save Changes</button>
                     </div>
                 </form>

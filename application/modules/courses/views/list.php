@@ -1,76 +1,97 @@
 <section class="content">
-    <div class="box">
-        <div class="box-header with-border">
-            <h3 class="box-title"><?php echo $title; ?> List</h3>
-            <div class="box-tools">
-                <a href="<?php echo base_url($form_link); ?>" class="btn btn-sm btn-primary">
-                    <i class="fa fa-plus"></i> Add New
-                </a>
-            </div>
-        </div>
-        
-        <div class="box-body table-responsive no-padding">
-            <table class="table table-hover table-bordered">
-                <thead>
-                    <tr class="bg-gray">
-                        <th>SN</th>
-                        <th>Image</th>
-                        <th>Course Name</th>
-                        <th>Sub-Level</th>
-                        <th>Status</th>
-                        <th>Action</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php if (!empty($list)): ?>
-                        <?php 
-                        $i = $this->uri->segment(4) ? $this->uri->segment(4) + 1 : 1;
-                        foreach ($list as $row): 
+    <div class="row">
+        <div class="col-md-12">
+            <div class="box">
+                <div class="box-header">
+                    <h3 class="box-title">
+                        <?php
+                        $check_form = $this->crud_model->get_module_function_for_role($redirect, $form_check_value);
+                        if ($check_form == true) {
                         ?>
-                        <tr>
-                            <td style="text-align: center; vertical-align: middle;"><?php echo $i++; ?></td>
-                            <td style="text-align: center; vertical-align: middle;">
-                                <?php if(!empty($row->docpath)): ?>
-                                    <img src="<?php echo base_url($row->docpath); ?>" style="height: 40px; width: 60px; object-fit: cover; border: 1px solid #ddd;">
-                                <?php else: ?>
-                                    <i class="fa fa-file-image-o fa-2x text-muted"></i>
-                                <?php endif; ?>
-                            </td>
-                            <td style="vertical-align: middle;">
-                                <strong><?php echo $row->title_en; ?></strong>
-                            </td>
-                            <td style="vertical-align: middle;"><?php echo $row->sub_level; ?></td>
-                            <td style="text-align: center; vertical-align: middle;">
-                                <?php if ($row->status == '1'): ?>
-                                    <span class="label label-success">Active</span>
-                                <?php else: ?>
-                                    <span class="label label-danger">Inactive</span>
-                                <?php endif; ?>
-                            </td>
-                            <td style="text-align: center; vertical-align: middle;">
-                                <div class="btn-group">
-                                    <a href="<?php echo base_url($redirect.'/admin/form/'.$row->id); ?>" class="btn btn-sm btn-default">
-                                        <i class="fa fa-pencil text-primary"></i>
-                                    </a>
-                                    <a href="<?php echo base_url($redirect.'/admin/delete/'.$row->id); ?>" class="btn btn-sm btn-default" onclick="return confirm('Are you sure?')">
-                                        <i class="fa fa-trash text-danger"></i>
-                                    </a>
+                        <a href="<?php echo base_url($form_link); ?>" class="btn btn-sm btn-primary">Add New</a>
+                        <?php } ?>
+                    </h3>
+                    <div class="box-tools">
+                        <form action="" method="get">
+                            <div class="input-group input-group-sm hidden-xs" style="width: 150px;">
+                                <input type="text" name="title" class="form-control pull-right"
+                                    placeholder="Search"
+                                    value="<?php echo $this->input->get('title'); ?>">
+                                <div class="input-group-btn">
+                                    <button type="submit" class="btn btn-default"><i class="fa fa-search"></i></button>
                                 </div>
-                            </td>
-                        </tr>
-                        <?php endforeach; ?>
-                    <?php else: ?>
-                        <tr>
-                            <td colspan="6" class="text-center" style="padding: 20px;">No records found.</td>
-                        </tr>
-                    <?php endif; ?>
-                </tbody>
-            </table>
-        </div>
-
-        <div class="box-footer clearfix">
-            <div class="pull-right">
-                <?php echo $pagination; ?>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                
+                <div class="box-body">
+                    <table class="table table-bordered table-responsive">
+                        <thead>
+                            <tr>
+                                <th>SN</th>
+                                <th>Image</th>
+                                <th>Course Name</th>
+                                <th>Sub-Level</th>
+                                <th>Status</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php if (!empty($list)): 
+                                $i = $this->uri->segment(4) ? $this->uri->segment(4) + 1 : 1;
+                                foreach ($list as $row): 
+                            ?>
+                                <tr>
+                                    <td><?php echo $row->id; ?></td>
+                                        <td>
+                                            <?php if ($row->docpath != ''): ?>
+                                                <img src="<?php echo base_url($row->docpath); ?>" 
+                                                     style="width: 60px; height: 40px; object-fit: cover; border-radius: 4px; border: 1px solid #ddd;">
+                                            <?php else: ?>
+                                                <span class="label label-default">No Image</span>
+                                            <?php endif; ?>
+                                        </td>
+                                    <td><strong><?php echo $row->title_en; ?></strong></td>
+                                    <td><?php echo $row->sub_level; ?></td>
+                                    <td>
+                                        <?php if ($row->status == 1): ?>
+                                            <span class="label label-success">Active</span>
+                                        <?php else: ?>
+                                            <span class="label label-danger">Inactive</span>
+                                        <?php endif; ?>
+                                    </td>
+                                    <td style="text-align: center;">
+                                            <a href="<?php echo base_url($redirect . '/admin/form/' . $row->id); ?>" 
+                                               class="btn btn-xs btn-primary" title="Edit">
+                                                <i class="fa fa-pencil"></i>
+                                            </a>
+                                            <a href="<?php echo base_url($redirect . '/admin/delete/' . $row->id); ?>" 
+                                               class="btn btn-xs btn-danger" 
+                                               onclick="return confirm('Are you sure you want to delete this course?');" 
+                                               title="Delete">
+                                                <i class="fa fa-trash"></i>
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                            <?php endforeach; ?>
+                            <?php else: ?>
+                                <tr>
+                                     <td colspan="6" class="text-center" style="padding: 20px;">
+                                        No records found. <a href="<?php echo base_url($redirect . '/admin/form'); ?>">Create one now</a>.
+                                    </td>
+                                </tr>
+                            <?php endif; ?>
+                        </tbody>
+                    </table>
+                </div>
+                
+                <div class="box-footer clearfix">
+                    <div class="pull-right">
+                        <?php echo isset($pagination) ? $pagination : ''; ?>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

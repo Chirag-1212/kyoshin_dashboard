@@ -17,7 +17,7 @@ class Admin extends Auth_controller
         $this->userId = $this->data['userId'];
     }
 
-    public function all($page = 0)
+    public function all($page = '')
     {
         $like = [];
         $param = ['status !=' => '2']; // Hide soft-deleted items
@@ -72,25 +72,41 @@ class Admin extends Auth_controller
         $this->load->view('layouts/admin/index', $data);
     }
 
-    public function form($id = '')
+public function form($id = '')
     {
         if ($this->input->post()) {
             $this->form_validation->set_rules('title_en', 'Title', 'required|trim');
 
             if ($this->form_validation->run()) {
+                $id = $this->input->post('id');
                 $file_name = $this->input->post('old_docpath');
 
                 if (!empty($_FILES['docpath']['name'])) {
+                    $upload_path = './uploads/courses/';
+                    
+                    // Automatically create directory if it doesn't exist
+                    if (!is_dir($upload_path)) {
+                        mkdir($upload_path, 0777, true);
+                    }
+
                     $config = [
-                        'upload_path'   => 'uploads/courses/',
+                        'upload_path'   => $upload_path,
                         'allowed_types' => 'jpeg|jpg|png|webp',
                         'encrypt_name'  => TRUE
                     ];
+                    
                     $this->load->library('upload', $config);
+                    // Re-initialize to ensure the new path is picked up
+                    $this->upload->initialize($config);
 
                     if ($this->upload->do_upload('docpath')) {
                         $file = $this->upload->data();
                         $file_name = 'uploads/courses/' . $file['file_name'];
+                    } else {
+                        // Display error if upload fails
+                        $upload_error = $this->upload->display_errors('', '');
+                        $this->session->set_flashdata('error', $this->upload->display_errors());
+                        redirect($this->redirect . '/admin/form/' . $id);
                     }
                 }
 
@@ -110,7 +126,7 @@ class Admin extends Auth_controller
                     'updated_on'  => date('Y-m-d H:i:s'),
                     'updated_by'  => $this->userId
                 ];
-
+                
                 $post_id = $this->input->post('id');
                 $final_id = !empty($id) ? $id : $post_id;
 
@@ -138,12 +154,20 @@ class Admin extends Auth_controller
         $this->load->view('layouts/admin/index', $data);
     }
 
-    public function delete($id)
-    {
-        if ($id) {
-            $this->crud_model->update($this->table, ['status' => '2'], ['id' => $id]);
-            $this->session->set_flashdata('success', 'Deleted successfully');
+    public function soft_delete($id){
+        $data = array(
+            'status' => '2',
+            'updated_by' => $this->userId, 
+            'updated' => date('Y-m-d'),
+        );
+        $this->db->where(array('id'=>$id));
+        $result = $this->db->delete($this->table);
+        if($result==true){
+            $this->session->set_flashdata('success','Successfully Deleted.');
+            redirect($this->redirect.'all');
+        }else{
+            $this->session->set_flashdata('error', 'Unable To Delete.');
+            redirect($this->redirect.'all');
         }
-        redirect($this->redirect . '/admin/all');
     }
 }
