@@ -804,15 +804,48 @@ class Crud_model extends CI_Model
         return 0;
     }
 
-    public function getData($table, $param, $like=[], $limit, $offset, $field = '*', $order_by = 'id DESC')
+    // public function getData($table, $param, $like=[], $limit, $offset, $field = '*', $order_by = 'id DESC')
+    // {
+    //     $sql = $this->db;
+    //     $sql->select($field);
+    //     // if($param){
+    //     //     $sql->where($param);
+    //     // }
+    //     if ($param) {
+    //         foreach ($param as $key => $value) {
+    //             if (is_array($value)) {
+    //                 $sql->where_in($key, $value);
+    //             } else {
+    //                 $sql->where($key, $value);
+    //             }
+    //         }
+    //     }
+        
+    //     if($like){
+    //        $sql->group_start();  //group start
+    //         $sql->or_like($like);
+    //         $sql->group_end();  //group ed
+    //     }
+
+    //     if($limit){
+    //         $sql->limit($limit, $offset);
+    //     }
+        
+    //     $sql->order_by($order_by);
+        
+
+    //     return $sql->get($table)->result();
+    // }
+    public function getData($table, $param = [], $like = [], $limit = null, $offset = null, $field = '*', $order_by = 'id DESC')
     {
         $sql = $this->db;
+
         $sql->select($field);
-        // if($param){
-        //     $sql->where($param);
-        // }
-        if ($param) {
+        $sql->from($table);
+
+        if (!empty($param)) {
             foreach ($param as $key => $value) {
+
                 if (is_array($value)) {
                     $sql->where_in($key, $value);
                 } else {
@@ -820,24 +853,22 @@ class Crud_model extends CI_Model
                 }
             }
         }
-        
-        if($like){
-           $sql->group_start();  //group start
+
+        if (!empty($like)) {
+            $sql->group_start();
             $sql->or_like($like);
-            $sql->group_end();  //group ed
+            $sql->group_end();
         }
 
-        if($limit){
+        if ($limit !== null) {
             $sql->limit($limit, $offset);
         }
-        
-        $sql->order_by($order_by);
-        
 
-        return $sql->get($table)->result();
+        $sql->order_by($order_by);
+
+        return $sql->get()->result();
     }
-    
-     public function getDataIN($table, $param, $like, $limit, $offset, $field = '*', $order_by = 'id DESC')
+    public function getDataIN($table, $param, $like, $limit, $offset, $field = '*', $order_by = 'id DESC')
     {
         $sql = $this->db;
         $sql->select($field);
