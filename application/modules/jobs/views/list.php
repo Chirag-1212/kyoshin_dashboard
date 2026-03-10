@@ -1,76 +1,86 @@
 <section class="content">
-    <div class="box">
-        <div class="box-header with-border">
-            <h3 class="box-title"><?php echo $title; ?> List</h3>
-            <div class="box-tools">
-                <a href="<?php echo base_url($form_link); ?>" class="btn btn-sm btn-primary">
-                    <i class="fa fa-plus"></i> Add New
-                </a>
-            </div>
-        </div>
-        
-        <div class="box-body table-responsive no-padding">
-            <table class="table table-hover table-bordered">
-                <thead>
-                    <tr class="bg-gray">
-                        <th style="width: 50px; text-align: center;">#</th>
-                        <th style="width: 80px; text-align: center;">Image</th>
-                        <th>Course Name</th>
-                        <th>Sub-Level</th>
-                        <th style="width: 100px; text-align: center;">Status</th>
-                        <th style="width: 110px; text-align: center;">Action</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php if (!empty($list)): ?>
-                        <?php 
-                        $i = $this->uri->segment(4) ? $this->uri->segment(4) + 1 : 1;
-                        foreach ($list as $row): 
+    <div class="row">
+        <div class="col-md-12">
+            <div class="box">
+                <div class="box-header">
+                    <h3 class="box-title">
+                        <?php
+                        $check_form = $this->crud_model->get_module_function_for_role($redirect, $form_check_value);
+                        if ($check_form == true) {
                         ?>
-                        <tr>
-                            <td style="text-align: center; vertical-align: middle;"><?php echo $i++; ?></td>
-                            <td style="text-align: center; vertical-align: middle;">
-                                <?php if(!empty($row->docpath)): ?>
-                                    <img src="<?php echo base_url($row->docpath); ?>" style="height: 40px; width: 60px; object-fit: cover; border: 1px solid #ddd;">
-                                <?php else: ?>
-                                    <i class="fa fa-file-image-o fa-2x text-muted"></i>
-                                <?php endif; ?>
-                            </td>
-                            <td style="vertical-align: middle;">
-                                <strong><?php echo $row->title_en; ?></strong>
-                            </td>
-                            <td style="vertical-align: middle;"><?php echo $row->sub_level; ?></td>
-                            <td style="text-align: center; vertical-align: middle;">
-                                <?php if ($row->status == '1'): ?>
-                                    <span class="label label-success">Active</span>
-                                <?php else: ?>
-                                    <span class="label label-danger">Inactive</span>
-                                <?php endif; ?>
-                            </td>
-                            <td style="text-align: center; vertical-align: middle;">
-                                <div class="btn-group">
-                                    <a href="<?php echo base_url($redirect.'/admin/form/'.$row->id); ?>" class="btn btn-sm btn-default">
-                                        <i class="fa fa-pencil text-primary"></i>
-                                    </a>
-                                    <a href="<?php echo base_url($redirect.'/admin/delete/'.$row->id); ?>" class="btn btn-sm btn-default" onclick="return confirm('Are you sure?')">
-                                        <i class="fa fa-trash text-danger"></i>
-                                    </a>
+                        <a href="<?php echo base_url($form_link); ?>" class="btn btn-sm btn-primary">Add New</a>
+                        <?php } ?>
+                    </h3>
+                    <div class="box-tools">
+                        <form action="" method="get">
+                            <div class="input-group input-group-sm" style="width: 200px;">
+                                <input type="text" name="table_search" class="form-control"
+                                    placeholder="Search..."
+                                    value="<?php echo htmlspecialchars($this->input->get('table_search') ?? ''); ?>">
+                                <div class="input-group-btn">
+                                    <button type="submit" class="btn btn-default"><i class="fa fa-search"></i></button>
                                 </div>
-                            </td>
-                        </tr>
-                        <?php endforeach; ?>
-                    <?php else: ?>
-                        <tr>
-                            <td colspan="6" class="text-center" style="padding: 20px;">No records found.</td>
-                        </tr>
-                    <?php endif; ?>
-                </tbody>
-            </table>
-        </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
 
-        <div class="box-footer clearfix">
-            <div class="pull-right">
-                <?php echo $pagination; ?>
+                <div class="box-body table-responsive no-padding">
+                    <table class="table table-hover table-bordered">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Image</th>
+                                <th>Title (EN)</th>
+                                <th>Title (JP)</th>
+                                <th>Status</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php if (!empty($list)): ?>
+                                <?php foreach ($list as $row): ?>
+                                <tr>
+                                    <td><?php echo $row->id; ?></td>
+                                    <td>
+                                        <?php if (!empty($row->docpath)): ?>
+                                            <img src="<?php echo base_url($row->docpath); ?>" style="width: 50px;">
+                                        <?php else: ?>
+                                            No Image
+                                        <?php endif; ?>
+                                    </td>
+                                    <td><strong><?php echo $row->title_en; ?></strong></td>
+                                    <td><?php echo $row->title_jp; ?></td>
+                                    <td>
+                                        <?php if ($row->status == 1): ?>
+                                            <span class="label label-success">Active</span>
+                                        <?php else: ?>
+                                            <span class="label label-danger">Inactive</span>
+                                        <?php endif; ?>
+                                    </td>
+                                    <td>
+                                        <a href="<?php echo base_url($redirect . '/admin/form/' . $row->id); ?>" 
+                                           class="btn btn-xs btn-primary"><i class="fa fa-pencil"></i></a>
+                                        <a href="<?php echo base_url($redirect . '/admin/delete/' . $row->id); ?>" 
+                                           class="btn btn-xs btn-danger" 
+                                           onclick="return confirm('Are you sure?');"><i class="fa fa-trash"></i></a>
+                                    </td>
+                                </tr>
+                                <?php endforeach; ?>
+                            <?php else: ?>
+                                <tr>
+                                    <td colspan="6" class="text-center">No records found.</td>
+                                </tr>
+                            <?php endif; ?>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="box-footer clearfix">
+                    <div class="pull-right">
+                        <?php echo isset($pagination) ? $pagination : ''; ?>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

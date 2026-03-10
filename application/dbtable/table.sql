@@ -184,3 +184,20 @@ CREATE TABLE gallery_images (
     created_on DATETIME DEFAULT NULL,
     PRIMARY KEY (id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- 1. Add the slug column if it doesn't exist
+-- Using 191 is a safe length for indexing in modern MySQL/MariaDB
+ALTER TABLE job_category 
+ADD COLUMN IF NOT EXISTS slug VARCHAR(191) NULL DEFAULT NULL AFTER title_jp;
+
+-- 2. Ensure all column names are strictly lowercase (renaming if necessary)
+-- If your 'desc_en' was accidentally 'Description', this fixes it:
+ALTER TABLE job_category 
+CHANGE COLUMN IF EXISTS Description desc_en TEXT NULL DEFAULT NULL,
+CHANGE COLUMN IF EXISTS description_jp desc_jp TEXT NULL DEFAULT NULL;
+
+-- 3. Update existing records to have a slug (optional but recommended)
+-- This replaces spaces with dashes and makes everything lowercase
+UPDATE job_category 
+SET slug = LOWER(REPLACE(title_en, ' ', '-')) 
+WHERE slug IS NULL OR slug = '';

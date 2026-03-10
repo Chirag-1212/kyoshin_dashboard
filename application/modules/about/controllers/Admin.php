@@ -92,7 +92,7 @@ class Admin extends Auth_controller
                 $slug = url_title($this->input->post('title_en'), 'dash', TRUE);
 
                 $update_data = [
-                    'title_en'   => $title_en,
+                    'title_en'   => $this->input->post('title_en'),
                     'title_jp'   => $this->input->post('title_jp'),
                     'slug'       => $slug,
                     'desc_en'    => $this->input->post('desc_en'),
