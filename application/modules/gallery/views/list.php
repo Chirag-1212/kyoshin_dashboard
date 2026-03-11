@@ -4,9 +4,7 @@
             <div class="box">
                 <div class="box-header">
                     <h3 class="box-title">
-                        <?php if ($this->crud_model->get_module_function_for_role('gallery', 'form')): ?>
-                            <a href="<?php echo base_url($redirect . 'form'); ?>" class="btn btn-sm btn-primary">add new</a>
-                        <?php endif; ?>
+                        <a href="<?php echo base_url($redirect . '/admin/form'); ?>" class="btn btn-sm btn-primary">add new</a>
                     </h3>
                     <div class="box-tools">
                         <form action="" method="get">
@@ -24,12 +22,13 @@
                     <table class="table table-bordered table-hover">
                         <thead>
                             <tr>
-                                <th>SN</th>
-                                <th>title</th>
+                                <th style="width: 50px;">sn</th>
+                                <th>title(en)</th>
+                                <th>title(jp)</th>
                                 <th>image</th>
                                 <th>created</th>
                                 <th>status</th>
-                                <th>action</th>
+                                <th style="width: 100px;">action</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -37,46 +36,48 @@
                                 <?php foreach ($items as $key => $value): ?>
                                     <tr>
                                         <td><?php echo $offset + $key + 1; ?></td>
-                                        <td><?php echo $value->title ?></td>
-                                        <td><?php echo $value->title_nepali ?></td>
+                                        <td><?php echo $value->title; ?></td>
+                                        <td><?php echo $value->title_nepali; ?></td>
                                         <td>
-                                            <?php if ($value->coverimage): ?>
-                                                <img src="<?php echo base_url($value->coverimage); ?>" class="img-fluid" style="max-height: 100px; object-fit: contain;">
+                                            <?php if (!empty($value->coverimage)): ?>
+                                                <img src="<?php echo base_url($value->coverimage); ?>" style="max-height: 50px; border-radius: 4px;">
+                                            <?php else: ?>
+                                                <span class="text-muted small">no image</span>
                                             <?php endif; ?>
                                         </td>
-                                        <td><?php echo $value->created ?></td>
+                                        <td><?php echo $value->created; ?></td>
                                         <td>
                                             <?php echo ($value->status == '1') ? '<span class="label label-success">active</span>' : '<span class="label label-danger">inactive</span>'; ?>
                                         </td>
                                         <td>
-                                            <?php if ($this->crud_model->get_module_function_for_role('gallery', 'form')): ?>
-                                                <a href="<?php echo base_url($redirect . 'form/' . $value->id); ?>" class="btn bg-purple btn-flat btn-sm"><i class="fa fa-edit"></i></a>
-                                            <?php endif; ?>
+                                            <a href="<?php echo base_url($redirect . '/admin/form/' . $value->id); ?>" class="btn bg-purple btn-flat btn-sm" title="Edit"><i class="fa fa-edit"></i></a>
+                                            
+                                            <a data-toggle="modal" data-target="#modal_<?php echo $value->id; ?>" class="btn bg-red btn-flat btn-sm" title="Delete"><i class="fa fa-trash"></i></a>
 
-                                            <?php if ($this->crud_model->get_module_function_for_role('gallery', 'soft_delete')): ?>
-                                                <a data-toggle="modal" data-target="#modal_<?php echo $value->id; ?>" class="btn bg-red btn-flat btn-sm"><i class="fa fa-trash"></i></a>
-                                                
-                                                <div class="modal fade" id="modal_<?php echo $value->id; ?>" tabindex="-1" role="dialog">
-                                                    <div class="modal-dialog">
-                                                        <div class="modal-content">
-                                                            <div class="modal-header">
-                                                                <button type="button" class="close" data-dismiss="modal">&times;</button>
-                                                                <h4 class="modal-title">delete confirmation</h4>
-                                                            </div>
-                                                            <div class="modal-body">are you sure to delete?</div>
-                                                            <div class="modal-footer">
-                                                                <button type="button" class="btn btn-default" data-dismiss="modal">no</button>
-                                                                <a href="<?php echo base_url($redirect . 'soft_delete/' . $value->id); ?>" class="btn btn-primary">yes</a>
-                                                            </div>
+                                            <div class="modal fade" id="modal_<?php echo $value->id; ?>" tabindex="-1" role="dialog">
+                                                <div class="modal-dialog modal-sm">
+                                                    <div class="modal-content">
+                                                        <div class="modal-header">
+                                                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                                            <h4 class="modal-title">confirm delete</h4>
+                                                        </div>
+                                                        <div class="modal-body text-center">
+                                                            are you sure you want to delete this gallery?
+                                                        </div>
+                                                        <div class="modal-footer">
+                                                            <button type="button" class="btn btn-default btn-flat" data-dismiss="modal">no</button>
+                                                            <a href="<?php echo base_url($redirect . '/admin/soft_delete/' . $value->id); ?>" class="btn btn-danger btn-flat">yes, delete</a>
                                                         </div>
                                                     </div>
                                                 </div>
-                                            <?php endif; ?>
+                                            </div>
                                         </td>
                                     </tr>
                                 <?php endforeach; ?>
                             <?php else: ?>
-                                <tr><td colspan="7" class="text-center">no records found</td></tr>
+                                <tr>
+                                    <td colspan="7" class="text-center">no records found</td>
+                                </tr>
                             <?php endif; ?>
                         </tbody>
                     </table>

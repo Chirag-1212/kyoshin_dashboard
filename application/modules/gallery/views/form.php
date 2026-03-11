@@ -57,9 +57,13 @@
 
                         <input type="hidden" name="id" value="<?= @$detail->id ?>">
                         
-                        <div class="row">
-                            <div class="col-md-12">
-                                <button type="submit" class="btn btn-primary">save</button>
+                        <div class="box-footer">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <button type="submit" class="btn btn-primary btn-flat">save</button>
+                                    
+                                    <a href="<?php echo base_url($redirect . '/admin/all'); ?>" class="btn btn-default btn-flat">cancel</a>
+                                </div>
                             </div>
                         </div>
                     </div>

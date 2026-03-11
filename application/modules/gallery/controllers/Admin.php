@@ -15,12 +15,13 @@ class Admin extends Auth_controller
         $this->userId = $this->data['userId'];
     }
 
-    public function all()
+        public function all()
     {
         $search = $this->input->get('table_search');
         $param = ['status !=' => '2'];
         $like = $search ? ['title' => $search] : [];
 
+        // Pagination Config
         $config = [
             'base_url' => base_url($this->redirect . '/admin/all'),
             'total_rows' => $this->crud_model->total($this->table, $param, $like),
@@ -39,26 +40,27 @@ class Admin extends Auth_controller
         $this->pagination->initialize($config);
         $page = $this->uri->segment(4) ?: 0;
 
+        // Passing 'items' instead of 'list' to match the View
         $data = array_merge($this->data, [
             'title' => $this->title,
             'page' => 'list',
-            'list' => $this->crud_model->getData($this->table, $param, $like, $config["per_page"], $page),
+            'items' => $this->crud_model->getData($this->table, $param, $like, $config["per_page"], $page, '*', 'id DESC'),
             'redirect' => $this->redirect,
             'form_link' => $this->redirect . '/admin/form/',
             'delete_link' => $this->redirect . '/admin/soft_delete/',
             'pagination' => $this->pagination->create_links(),
             'offset' => $page
         ]);
+
         $this->load->view('layouts/admin/index', $data);
     }
-
-    public function form($id = '')
+        public function form($id = '')
     {
         $detail = $this->crud_model->get_where_single($this->table, ['id' => $id]);
         $path = 'uploads/gallery/';
 
         if ($this->input->post()) {
-            $this->form_validation->set_rules('title', 'Title', 'required|trim');
+            $this->form_validation->set_rules('title', 'title', 'required|trim');
             
             if ($this->form_validation->run()) {
                 $post_id = $this->input->post('id');
@@ -85,18 +87,23 @@ class Admin extends Auth_controller
 
                 if ($db_id) $this->_handle_gallery($db_id, $path);
 
-                $this->session->set_flashdata($db_id ? 'success' : 'error', $db_id ? 'Operation Successful' : 'Operation Failed');
+                $this->session->set_flashdata($db_id ? 'success' : 'error', $db_id ? 'operation successful' : 'operation failed');
+                
+                // Fixed redirect path
                 redirect($this->redirect . '/admin/all');
             }
         }
 
         $data = [
-            'title' => ($detail ? 'Edit ' : 'Add ') . $this->title,
-            'detail' => $detail,
-            'items' => $this->crud_model->get_where($this->images_table, ['status !=' => '2', 'gallery_id' => $id]),
+            'title'    => ($detail ? 'edit ' : 'add ') . $this->title,
+            'detail'   => $detail,
+            'redirect' => $this->redirect, // Explicitly pass the variable
+            'items'    => $id ? $this->crud_model->get_where($this->images_table, ['status !=' => '2', 'gallery_id' => $id]) : [],
             'doc_path' => $path,
-            'page' => 'form'
+            'page'     => 'form'
         ];
+        
+        // Merge properly to make sure 'redirect' is available in the view
         $this->load->view('layouts/admin/index', array_merge($this->data, $data));
     }
 
@@ -141,10 +148,20 @@ class Admin extends Auth_controller
         }
     }
 
-    public function soft_delete($id)
-    {
-        $result = $this->crud_model->update($this->table, ['status' => '2'], ['id' => $id]);
-        $this->session->set_flashdata($result ? 'success' : 'error', $result ? 'Successfully Deleted.' : 'Unable To Delete.');
-        redirect($this->redirect . '/admin/all');
+    public function soft_delete($id){
+        $data = array(
+            'status' => '2',
+            'updated_by' => $this->userId, 
+            'updated' => date('Y-m-d'),
+        );
+        $this->db->where(array('id'=>$id));
+        $result = $this->db->delete($this->table);
+        if($result==true){
+            $this->session->set_flashdata('success','Successfully Deleted.');
+            redirect($this->redirect.'all');
+        }else{
+            $this->session->set_flashdata('error', 'Unable To Delete.');
+            redirect($this->redirect.'all');
+        }
     }
 }
