@@ -13,14 +13,14 @@
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label>title(english) <span>*</span></label>
-                                    <input type="text" name="title" class="form-control" value="<?= @$detail->title ?>" required>
+                                    <label>title(english)</label>
+                                    <input type="text" name="title_en" class="form-control" value="<?= @$detail->title_en ?>" required>
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label>title(japanee)</label>
-                                    <input type="text" name="title_nepali" class="form-control" value="<?= @$detail->title_nepali ?>">
+                                    <label>title(japanese)</label>
+                                    <input type="text" name="title_jn" class="form-control" value="<?= @$detail->title_jn ?>">
                                 </div>
                             </div>
                         </div>
@@ -61,7 +61,6 @@
                             <div class="row">
                                 <div class="col-md-12">
                                     <button type="submit" class="btn btn-primary btn-flat">save</button>
-                                    
                                     <a href="<?php echo base_url($redirect . '/admin/all'); ?>" class="btn btn-default btn-flat">cancel</a>
                                 </div>
                             </div>

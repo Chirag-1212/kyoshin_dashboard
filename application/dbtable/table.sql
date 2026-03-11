@@ -163,8 +163,8 @@ MODIFY COLUMN status ENUM('0', '1', '2') NOT NULL DEFAULT '1';
 -- Main gallery table
 CREATE TABLE gallery (
     id INT(11) NOT NULL AUTO_INCREMENT,
-    title VARCHAR(255) NOT NULL,
-    title_nepali VARCHAR(255) DEFAULT NULL,
+    title_en VARCHAR(255) NOT NULL,
+    title_jp VARCHAR(255) DEFAULT NULL,
     description TEXT DEFAULT NULL,
     coverimage VARCHAR(255) DEFAULT NULL,
     status ENUM('0', '1', '2') DEFAULT '1' COMMENT '0: Inactive, 1: Active, 2: Soft Delete',

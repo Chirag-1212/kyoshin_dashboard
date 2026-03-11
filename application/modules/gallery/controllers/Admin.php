@@ -11,36 +11,27 @@ class Admin extends Auth_controller
         $this->table = 'gallery';
         $this->images_table = 'gallery_images';
         $this->title = 'Gallery';
-        $this->redirect = 'gallery'; // Ensure this matches your route
+        $this->redirect = 'gallery'; 
         $this->userId = $this->data['userId'];
     }
 
-        public function all()
+    public function all()
     {
         $search = $this->input->get('table_search');
         $param = ['status !=' => '2'];
-        $like = $search ? ['title' => $search] : [];
+        $like = $search ? ['title_en' => $search] : [];
 
-        // Pagination Config
         $config = [
             'base_url' => base_url($this->redirect . '/admin/all'),
             'total_rows' => $this->crud_model->total($this->table, $param, $like),
             'per_page' => 10,
             'uri_segment' => 4,
-            'full_tag_open' => '<ul class="pagination pagination-sm m-0 float-right">',
-            'full_tag_close' => '</ul>',
-            'attributes' => ['class' => 'page-link'],
-            'num_tag_open' => '<li class="page-item">',
-            'num_tag_close' => '</li>',
-            'cur_tag_open' => '<li class="page-item active"><a class="page-link">',
-            'cur_tag_close' => '</a></li>',
             'suffix' => $search ? "?table_search=$search" : ''
         ];
         
         $this->pagination->initialize($config);
         $page = $this->uri->segment(4) ?: 0;
 
-        // Passing 'items' instead of 'list' to match the View
         $data = array_merge($this->data, [
             'title' => $this->title,
             'page' => 'list',
@@ -54,24 +45,25 @@ class Admin extends Auth_controller
 
         $this->load->view('layouts/admin/index', $data);
     }
-        public function form($id = '')
+
+    public function form($id = '')
     {
         $detail = $this->crud_model->get_where_single($this->table, ['id' => $id]);
         $path = 'uploads/gallery/';
 
         if ($this->input->post()) {
-            $this->form_validation->set_rules('title', 'title', 'required|trim');
+            $this->form_validation->set_rules('title_en', 'Title English', 'required|trim');
             
             if ($this->form_validation->run()) {
                 $post_id = $this->input->post('id');
                 $cover_img = $this->_handle_upload('coverimage', $path, @$detail->coverimage);
 
                 $save_data = [
-                    'title' => $this->input->post('title'),
-                    'title_nepali' => $this->input->post('title_nepali'),
-                    'description' => $this->input->post('description'),
-                    'coverimage' => $cover_img,
-                    'status' => $this->input->post('status')
+                    'title_en'     => $this->input->post('title_en'),
+                    'title_jn'     => $this->input->post('title_jn'),
+                    'description'  => $this->input->post('description'),
+                    'coverimage'   => $cover_img,
+                    'status'       => $this->input->post('status')
                 ];
 
                 if (empty($post_id)) {
@@ -86,24 +78,19 @@ class Admin extends Auth_controller
                 }
 
                 if ($db_id) $this->_handle_gallery($db_id, $path);
-
-                $this->session->set_flashdata($db_id ? 'success' : 'error', $db_id ? 'operation successful' : 'operation failed');
-                
-                // Fixed redirect path
+                $this->session->set_flashdata('success', 'Operation successful');
                 redirect($this->redirect . '/admin/all');
             }
         }
 
         $data = [
-            'title'    => ($detail ? 'edit ' : 'add ') . $this->title,
+            'title'    => ($detail ? 'Edit ' : 'Add ') . $this->title,
             'detail'   => $detail,
-            'redirect' => $this->redirect, // Explicitly pass the variable
+            'redirect' => $this->redirect,
             'items'    => $id ? $this->crud_model->get_where($this->images_table, ['status !=' => '2', 'gallery_id' => $id]) : [],
-            'doc_path' => $path,
             'page'     => 'form'
         ];
         
-        // Merge properly to make sure 'redirect' is available in the view
         $this->load->view('layouts/admin/index', array_merge($this->data, $data));
     }
 
@@ -137,9 +124,9 @@ class Admin extends Auth_controller
                 if ($this->upload->do_upload('file')) {
                     $fileData = $this->upload->data();
                     $uploadData[] = [
-                        'docpath' => $path . $fileData['file_name'],
+                        'docpath'    => $path . $fileData['file_name'],
                         'gallery_id' => $gallery_id,
-                        'status' => '1',
+                        'status'     => '1',
                         'created_on' => date("Y-m-d H:i:s")
                     ];
                 }
@@ -150,18 +137,18 @@ class Admin extends Auth_controller
 
     public function soft_delete($id){
         $data = array(
-            'status' => '2',
+            'status'     => '2',
             'updated_by' => $this->userId, 
-            'updated' => date('Y-m-d'),
+            'updated'    => date('Y-m-d'),
         );
         $this->db->where(array('id'=>$id));
-        $result = $this->db->delete($this->table);
-        if($result==true){
-            $this->session->set_flashdata('success','Successfully Deleted.');
-            redirect($this->redirect.'all');
-        }else{
+        $result = $this->db->update($this->table, $data);
+        if($result == true){
+            $this->session->set_flashdata('success', 'Successfully Deleted.');
+            redirect($this->redirect . '/admin/all');
+        } else {
             $this->session->set_flashdata('error', 'Unable To Delete.');
-            redirect($this->redirect.'all');
+            redirect($this->redirect . '/admin/all');
         }
     }
 }
