@@ -1,74 +1,89 @@
 <section class="content">
-    <div class="box">
-        <div class="box-header with-border">
-            <h3 class="box-title"><?php echo $title; ?> List</h3>
-            <div class="box-tools">
-                <a href="<?php echo base_url($form_link); ?>" class="btn btn-sm btn-primary">
-                    <i class="fa fa-plus"></i> Add New
-                </a>
-            </div>
-        </div>
-        
-        <div class="box-body table-responsive no-padding">
-            <table class="table table-hover table-bordered table-striped">
-                <thead>
-                    <tr class="bg-gray">
-                        <th style="width: 60px; text-align: center;">SN</th>
-                        <th>Category Title</th>
-                        <th>Slug</th>
-                        <th style="width: 100px; text-align: center;">Status</th>
-                        <th style="width: 120px; text-align: center;">Action</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php if (!empty($items)): ?>
-                        <?php 
-                        // Synchronizing SN logic with your previous code
-                        $i = $this->uri->segment(4) ? $this->uri->segment(4) + 1 : 1; 
-                        foreach ($items as $row): 
-                        ?>
-                        <tr>
-                            <td style="text-align: center; vertical-align: middle;"><?php echo $i++; ?></td>
-                            <td style="vertical-align: middle;">
-                                <strong><?php echo $row->title; ?></strong>
-                            </td>
-                            <td style="vertical-align: middle;">
-                                <small class="text-muted"><?php echo $row->slug; ?></small>
-                            </td>
-                            <td style="text-align: center; vertical-align: middle;">
-                                <?php if ($row->status == '1'): ?>
-                                    <span class="label label-success">Active</span>
-                                <?php else: ?>
-                                    <span class="label label-warning">Inactive</span>
-                                <?php endif; ?>
-                            </td>
-                            <td style="text-align: center; vertical-align: middle;">
-                                <div class="btn-group">
-                                    <a href="<?php echo base_url($redirect . '/admin/form/' . $row->id); ?>" class="btn btn-sm btn-default" title="Edit">
-                                        <i class="fa fa-pencil text-primary"></i>
-                                    </a>
-                                    <a href="<?php echo base_url($redirect . '/admin/soft_delete/' . $row->id); ?>" class="btn btn-sm btn-default" title="Delete" onclick="return confirm('Are you sure you want to delete this category?')">
-                                        <i class="fa fa-trash text-danger"></i>
-                                    </a>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="box">
+                <div class="box-header">
+                    <h3 class="box-title">
+                        <a href="<?php echo base_url($form_link); ?>" class="btn btn-sm btn-primary">Add New</a>
+                    </h3>
+                    <div class="box-tools">
+                        <form action="" method="get">
+                            <div class="input-group input-group-sm hidden-xs" style="width: 150px;">
+                                <input type="text" name="table_search" class="form-control pull-right"
+                                    placeholder="Search"
+                                    value="<?php echo $this->input->get('table_search'); ?>">
+                                <div class="input-group-btn">
+                                    <button type="submit" class="btn btn-default"><i class="fa fa-search"></i></button>
                                 </div>
-                            </td>
-                        </tr>
-                        <?php endforeach; ?>
-                    <?php else: ?>
-                        <tr>
-                            <td colspan="5" class="text-center" style="padding: 30px;">
-                                <i class="fa fa-folder-open-o fa-2x text-muted"></i><br>
-                                No records found.
-                            </td>
-                        </tr>
-                    <?php endif; ?>
-                </tbody>
-            </table>
-        </div>
-
-        <div class="box-footer clearfix">
-            <div class="pull-right">
-                <?php echo $pagination; ?>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                
+                <div class="box-body">
+                    <table class="table table-bordered table-responsive">
+                        <thead>
+                            <tr>
+                                <th>sn</th>
+                                <th>category title</th>
+                                <th>parent</th>
+                                <th>status</th>
+                                <th>action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php if (!empty($items)): ?>
+                                <?php 
+                                $i = $this->uri->segment(4) ? $this->uri->segment(4) + 1 : 1; 
+                                foreach ($items as $row): 
+                                ?>
+                                <tr>
+                                    <td><?php echo $i++; ?></td>
+                                    <td><strong><?php echo $row->title; ?></strong></td>
+                                    <td>
+                                        <?php if ($row->parent_id == '1'): ?>
+                                            <span class="label label-info">yes</span>
+                                        <?php else: ?>
+                                            <span class="label label-default">no</span>
+                                        <?php endif; ?>
+                                    </td>
+                                    <td>
+                                        <?php if ($row->status == '1'): ?>
+                                            <span class="label label-success">active</span>
+                                        <?php else: ?>
+                                            <span class="label label-danger">inactive</span>
+                                        <?php endif; ?>
+                                    </td>
+                                    <td>
+                                        <a href="<?php echo base_url($redirect . '/admin/form/' . $row->id); ?>" 
+                                           class="btn btn-xs btn-primary" title="Edit">
+                                            <i class="fa fa-pencil"></i>
+                                        </a>
+                                        <a href="<?php echo base_url($delete_link . $row->id); ?>" 
+                                           class="btn btn-xs btn-danger" 
+                                           onclick="return confirm('Are you sure you want to delete this?');" 
+                                           title="Delete">
+                                            <i class="fa fa-trash"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                                <?php endforeach; ?>
+                            <?php else: ?>
+                                <tr>
+                                    <td colspan="5" class="text-center" style="padding: 20px;">
+                                        No records found. <a href="<?php echo base_url($form_link); ?>">Create one now</a>.
+                                    </td>
+                                </tr>
+                            <?php endif; ?>
+                        </tbody>
+                    </table>
+                </div>
+                
+                <div class="box-footer clearfix">
+                    <div class="pull-right">
+                        <?php echo isset($pagination) ? $pagination : ''; ?>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

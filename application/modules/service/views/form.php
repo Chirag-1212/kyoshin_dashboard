@@ -13,12 +13,11 @@
                         <div class="form-group">
                             <label>Title (English) <span class="text-danger">*</span></label>
                             <input type="text" name="title_en" class="form-control" value="<?php echo set_value('title_en', @$detail->title_en); ?>" required>
-                            <?php echo form_error('title_en', '<span class="text-danger small">', '</span>'); ?>
                         </div>
                     </div>
                     <div class="col-md-6">
                         <div class="form-group">
-                            <label>Title (Japanese/Nepali)</label>
+                            <label>Title (Japanese)</label>
                             <input type="text" name="title_jp" class="form-control" value="<?php echo set_value('title_jp', @$detail->title_jp); ?>">
                         </div>
                     </div>
@@ -40,7 +39,7 @@
                         <div class="form-group">
                             <label>Service Category</label>
                             <select name="service_category_id" class="form-control">
-                                <?php echo $html; ?>
+                                <?php echo $html; ?> 
                             </select>
                         </div>
                     </div>
@@ -70,27 +69,18 @@
                         <div class="form-group">
                             <label>Document (PDF/Image)</label>
                             <input type="file" name="docpath" class="form-control-file">
-                            <?php if(@$detail->docpath): ?>
-                                <small class="text-info d-block">Current: <?php echo basename($detail->docpath); ?></small>
-                            <?php endif; ?>
                         </div>
                     </div>
                     <div class="col-md-4">
                         <div class="form-group">
                             <label>Cover Image</label>
                             <input type="file" name="coverimage" class="form-control-file">
-                            <?php if(@$detail->coverimage): ?>
-                                <img src="<?php echo base_url($detail->coverimage); ?>" width="80" class="mt-2 d-block border shadow-sm">
-                            <?php endif; ?>
                         </div>
                     </div>
                     <div class="col-md-4">
                         <div class="form-group">
                             <label>Main Image</label>
                             <input type="file" name="image" class="form-control-file">
-                            <?php if(@$detail->image): ?>
-                                <img src="<?php echo base_url($detail->image); ?>" width="80" class="mt-2 d-block border shadow-sm">
-                            <?php endif; ?>
                         </div>
                     </div>
                 </div>

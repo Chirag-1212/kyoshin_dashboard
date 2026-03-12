@@ -22,7 +22,6 @@ class Admin extends Auth_controller
         $like = [];
         $param = ['status !=' => '2'];
 
-        // FIXED: Using lowercase 'title' to match your DB
         if($this->input->get('table_search')){
             $search = $this->input->get('table_search');
             $like['title'] = $search; 
@@ -30,7 +29,6 @@ class Admin extends Auth_controller
 
         $total = $this->crud_model->total($this->table, $param, $like);
         
-        // Pagination Config (Your custom styles kept)
         $config['base_url'] = base_url($this->redirect . '/admin/all');
         $config['total_rows'] = $total;
         $config['uri_segment'] = 4;
@@ -84,10 +82,9 @@ class Admin extends Auth_controller
             if ($this->form_validation->run()) {
                 $id = $this->input->post('id');
 
-                // FIXED: Include parent_id and status in save_data
                 $save_data = [
                     'title'     => $this->input->post('title'),
-                    'parent_id' => $this->input->post('parent_id'),
+                    'parent_id' => $this->input->post('parent_id'), 
                     'status'    => $this->input->post('status')
                 ];
 
@@ -115,46 +112,13 @@ class Admin extends Auth_controller
         $data['detail'] = $detail;
         $data['title'] = ($detail) ? 'Edit ' . $this->title : 'Add ' . $this->title;
         $data['page'] = 'form';
-        $selected_parent = (isset($detail->parent_id)) ? $detail->parent_id : 0;
-        $data['html'] = $this->get_parents_html($selected_parent);
+        
+        // FIXED: Now passing the redirect string so the cancel button knows where to go
+        $data['redirect'] = $this->redirect; 
+        
+        $data['selected_parent'] = (isset($detail->parent_id)) ? $detail->parent_id : 1; 
         
         $this->load->view('layouts/admin/index', array_merge($this->data, $data));
-    }
-
-    public function get_parents_html($selected_parent = 0)
-    {
-        $html = '<option value="0">Main Category</option>';
-        $parents = $this->db->get_where($this->table, array('status' => '1', 'parent_id' => 0))->result();
-        
-        if ($parents) {
-            foreach ($parents as $value) {
-                // FIXED: lowercase $value->title
-                $sel = ($value->id == $selected_parent) ? "selected" : "";
-                $html .= '<option value="' . $value->id . '" ' . $sel . '>' . $value->title . '</option>';
-                
-                $childs = $this->db->get_where($this->table, array('parent_id' => $value->id, 'status' => '1'))->result();
-                if (!empty($childs)) {
-                    $html .= $this->get_childs($childs, $selected_parent, '&nbsp;&nbsp;&nbsp;-- ');
-                }
-            }
-        }
-        return $html;
-    }
-
-    // Recursive helper for sub-categories
-    public function get_childs($childs, $selected_parent, $space)
-    {
-        $html = '';
-        foreach ($childs as $value) {
-            $sel = ($value->id == $selected_parent) ? "selected" : "";
-            $html .= '<option value="' . $value->id . '" ' . $sel . '>' . $space . $value->title . '</option>';
-            
-            $sub_childs = $this->db->get_where($this->table, array('parent_id' => $value->id, 'status' => '1'))->result();
-            if (!empty($sub_childs)) {
-                $html .= $this->get_childs($sub_childs, $selected_parent, $space . '&nbsp;&nbsp;');
-            }
-        }
-        return $html;
     }
 
     public function soft_delete($id)
