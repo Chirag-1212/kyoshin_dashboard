@@ -3,177 +3,164 @@ defined('BASEPATH') or exit('No direct script access allowed');
 
 class Admin extends Auth_controller
 {
-    protected $userId, $table, $redirect, $title;
+    protected $userId;
+    protected $table;
+    protected $imageTable;
+    protected $redirect;
+    protected $title;
 
     public function __construct()
     {
         parent::__construct();
-        $this->table = 'news';
-        $this->title = 'News';
-        $this->redirect = 'news'; // Ensure this matches your route folder
-        $this->userId = $this->data['userId'];
+        $this->table       = 'news';
+        $this->imageTable  = 'news_images';
+        $this->title       = 'News';
+        $this->redirect    = 'news';
+        $this->userId      = $this->data['userId'];
     }
 
-    public function all()
+    private function detectTextLanguage(string $text): string
     {
-        $search = $this->input->get('table_search');
-        $param = ['status !=' => '2'];
-        $like = $search ? ['title' => $search] : [];
+        // Devanagari Unicode block: U+0900–U+097F
+        return preg_match('/[\x{0900}-\x{097F}]/u', $text) ? 'np' : 'en';
+    }
 
-        // Pagination Config
+    private function uploadImage(string $inputName, string $uploadDir, string $oldPath = '')
+    {
+        if (empty($_FILES[$inputName]['name'])) return $oldPath;
+
+        if (!is_dir($uploadDir)) mkdir($uploadDir, 0777, true);
+
         $config = [
-            'base_url' => base_url($this->redirect . '/admin/all'),
-            'total_rows' => $this->crud_model->total($this->table, $param, $like),
-            'per_page' => 10,
-            'uri_segment' => 4,
-            'full_tag_open' => '<ul class="pagination pagination-sm m-0 float-right">',
-            'full_tag_close' => '</ul>', 
-            'attributes' => ['class' => 'page-link'],
-            'num_tag_open' => '<li class="page-item">',
-            'num_tag_close' => '</li>',
-            'cur_tag_open' => '<li class="page-item active"><a class="page-link">',
-            'cur_tag_close' => '</a></li>',
-            'suffix' => $search ? "?table_search=$search" : ''
+            'upload_path'   => $uploadDir,
+            'allowed_types' => 'jpeg|jpg|png|webp',
+            'encrypt_name'  => TRUE,
+            'max_size'      => '10240',
         ];
-        
+
+        $this->load->library('upload', $config);
+        $this->upload->initialize($config);
+
+        if ($this->upload->do_upload($inputName)) {
+            return ltrim($uploadDir, './') . $this->upload->data('file_name');
+        }
+
+        $this->session->set_flashdata('error', 'Upload Error: ' . $this->upload->display_errors('', ''));
+        return FALSE;
+    }
+
+    public function all($page = '')
+    {
+        $like  = [];
+        $param = ['status !=' => '2'];
+
+        if ($search = $this->input->get('table_search')) {
+            $like['title_en'] = $search;
+            $like['title_jp'] = $search;
+        }
+
+        $total = $this->crud_model->total($this->table, $param, $like);
+        $config = [
+            'base_url'    => base_url($this->redirect . '/admin/all'),
+            'total_rows'  => $total,
+            'per_page'    => 10,
+            'uri_segment' => 4,
+            'reuse_query_string' => TRUE
+        ];
         $this->pagination->initialize($config);
-        $page = $this->uri->segment(4) ?: 0;
+
+        $items = $this->crud_model->getData($this->table, $param, $like, $config['per_page'], $page, '*', 'id DESC');
 
         $data = array_merge($this->data, [
-            'title' => $this->title,
-            'page' => 'list',
-            'list' => $this->crud_model->getData($this->table, $param, $like, $config["per_page"], $page),
+            'title'    => $this->title,
+            'page'     => 'list',
+            'list'     => $items,
             'redirect' => $this->redirect,
-            'form_link' => $this->redirect . '/admin/form/',
-            'delete_link' => $this->redirect . '/admin/soft_delete/',
             'pagination' => $this->pagination->create_links(),
-            'offset' => $page
         ]);
+
         $this->load->view('layouts/admin/index', $data);
     }
 
     public function form($id = '')
     {
-        $detail = $this->crud_model->get_where_single($this->table, ['id' => $id]);
-        $path = 'uploads/news/';
-
         if ($this->input->post()) {
-            $this->form_validation->set_rules('title', 'Title', 'required|trim');
-            $this->form_validation->set_rules('category_id', 'Category', 'required');
+            $titleEn = trim($this->input->post('title_en'));
+            $titleNp = trim($this->input->post('title_jp'));
+
+            if (empty($titleEn) && empty($titleNp)) {
+                $this->session->set_flashdata('error', 'At least one title is required.');
+                redirect($this->redirect . '/admin/form/' . $id);
+            }
+
+            $isNew = empty($id);
+            $slugSource = !empty($titleEn) ? $titleEn : $titleNp;
             
-            if ($this->form_validation->run()) {
-                $post_id = $this->input->post('id');
-                
-                $doc_path = $this->_handle_upload('docpath', $path, @$detail->docpath);
-                $cover_img = $this->_handle_upload('coverimage', $path, @$detail->coverimage);
+            // Logic fixed: detect 'np' correctly
+            $lang = $this->detectTextLanguage($slugSource);
+            $slug = ($lang === 'np') ? 'news-' . ($isNew ? time() : $id) : url_title($slugSource, 'dash', TRUE);
 
-                $save_data = [
-                    'category_id'      => $this->input->post('category_id'),
-                    'sub_category_id'  => $this->input->post('sub_category_id'),
-                    'datevalue'        => $this->input->post('datevalue'),
-                    'due_date'         => $this->input->post('due_date'),
-                    'coverimage'       => $cover_img,
-                    'docpath'          => $doc_path,
-                    'title'            => $this->input->post('title'),
-                    'title_nepali'     => $this->input->post('title_nepali'),
-                    'description'      => $this->input->post('description'),
-                    'is_slider'        => $this->input->post('is_slider') ? '1' : '2',
-                    'status'           => $this->input->post('status'),
-                    'imp_notice'       => $this->input->post('imp_notice') ? '1' : '2',
-                ];
+            $mainImagePath = $this->uploadImage('docpath', './uploads/news/main/', $this->input->post('old_docpath'));
 
-                // Slug logic: Fallback to title + timestamp if logic fails
-                $slug_text = $save_data['title'];
-                $slug = strtolower($this->crud_model->createUrlSlug($slug_text));
-                
-                // If adding new, ensure slug is unique
-                if (empty($post_id)) {
-                    $save_data['slug'] = $this->crud_model->get_where_single($this->table, ['slug' => $slug]) ? $slug . '-' . time() : $slug;
-                    $save_data['created_on'] = date('Y-m-d H:i:s');
-                    $save_data['created_by'] = $this->userId;
-                    $db_id = $this->crud_model->inserted($this->table, $save_data);
-                } else {
-                    $save_data['slug'] = $slug;
-                    $save_data['updated_on'] = date('Y-m-d');
-                    $save_data['updated_by'] = $this->userId;
-                    $this->crud_model->update($this->table, $save_data, ['id' => $post_id]);
-                    $db_id = $post_id;
-                }
+            if ($mainImagePath === FALSE) redirect($this->redirect . '/admin/form/' . $id);
 
-                if ($db_id) $this->_handle_gallery($db_id, $path);
+            $saveData = [
+                'title_en'   => $titleEn,
+                'title_jp'   => $titleNp,
+                'slug'       => $slug,
+                'desc_en'    => $this->input->post('desc_en'),
+                'desc_jp'    => $this->input->post('desc_jp'),
+                'docpath'    => $mainImagePath,
+                'status'     => $this->input->post('status'),
+                'updated_on' => date('Y-m-d H:i:s'),
+                'updated_by' => $this->userId,
+            ];
 
-                $this->session->set_flashdata($db_id ? 'success' : 'error', $db_id ? 'Operation Successful' : 'Operation Failed');
-                redirect($this->redirect . '/admin/all');
+            if ($isNew) {
+                $saveData['created_on'] = date('Y-m-d H:i:s');
+                $saveData['created_by'] = $this->userId;
+                $newsId = $this->crud_model->insert($this->table, $saveData);
+            } else {
+                $this->crud_model->update($this->table, $saveData, ['id' => $id]);
+                $newsId = $id;
             }
-        }
 
-        // Logic to keep sub-categories if validation fails
-        $selected_cat = $this->input->post('category_id') ?: @$detail->category_id;
-
-        $data = [
-            'title'          => ($detail ? 'Edit ' : 'Add ') . $this->title,
-            'detail'         => $detail,
-            'categories'     => $this->crud_model->get_where('news_categories', ['status' => '1', 'parent_id' => 0]),
-            'sub_categories' => $selected_cat ? $this->crud_model->get_where('news_categories', ['status' => '1', 'parent_id' => $selected_cat]) : [],
-            'items'          => $this->crud_model->get_where('news_images', ['status !=' => '2', 'news_id' => $id]),
-            'doc_path'       => $path,
-            'page'           => 'form'
-        ];
-        $this->load->view('layouts/admin/index', array_merge($this->data, $data));
-    }
-
-    public function get_sub_categories() {
-        $parent_id = $this->input->post('parent_id');
-        $subs = $this->crud_model->get_where('news_categories', ['parent_id' => $parent_id, 'status' => '1']);
-        echo json_encode($subs);
-    }
-
-    private function _handle_upload($field, $path, $existing) {
-        if (!empty($_FILES[$field]['name'])) {
-            if (!is_dir($path)) mkdir($path, 0777, true);
-            $config = ['upload_path' => $path, 'allowed_types' => 'jpeg|jpg|png|pdf', 'max_size' => '5120', 'encrypt_name' => TRUE];
-            $this->load->library('upload');
-            $this->upload->initialize($config);
-            if ($this->upload->do_upload($field)) {
-                $data = $this->upload->data();
-                return $path . $data['file_name'];
-            }
-        }
-        return $existing ?: "";
-    }
-
-    private function _handle_gallery($news_id, $path) {
-        if (!empty($_FILES['files']['name'][0])) {
-            $filesCount = count($_FILES['files']['name']);
-            $uploadData = [];
-            $this->load->library('upload');
-            for ($i = 0; $i < $filesCount; $i++) {
-                $_FILES['file']['name']     = $_FILES['files']['name'][$i];
-                $_FILES['file']['type']     = $_FILES['files']['type'][$i];
-                $_FILES['file']['tmp_name'] = $_FILES['files']['tmp_name'][$i];
-                $_FILES['file']['error']    = $_FILES['files']['error'][$i];
-                $_FILES['file']['size']     = $_FILES['files']['size'][$i];
-
-                $config = ['upload_path' => $path, 'allowed_types' => 'jpg|jpeg|png|gif', 'encrypt_name' => TRUE];
-                $this->upload->initialize($config);
-                if ($this->upload->do_upload('file')) {
-                    $fileData = $this->upload->data();
-                    $uploadData[] = [
-                        'docpath'    => $path . $fileData['file_name'],
-                        'news_id'    => $news_id,
-                        'status'     => '1',
-                        'created_on' => date("Y-m-d H:i:s")
+            // Handle Gallery Batch
+            if (!empty($_FILES['gallery_images']['name'][0])) {
+                $this->load->library('upload');
+                foreach ($_FILES['gallery_images']['name'] as $i => $name) {
+                    if (empty($name)) continue;
+                    $_FILES['gallery_item'] = [
+                        'name' => $_FILES['gallery_images']['name'][$i], 'type' => $_FILES['gallery_images']['type'][$i],
+                        'tmp_name' => $_FILES['gallery_images']['tmp_name'][$i], 'error' => $_FILES['gallery_images']['error'][$i],
+                        'size' => $_FILES['gallery_images']['size'][$i]
                     ];
+                    $path = $this->uploadImage('gallery_item', './uploads/news/gallery/');
+                    if ($path) {
+                        $this->crud_model->insert($this->imageTable, [
+                            'news_id' => $newsId, 'docpath' => $path, 'status' => '1',
+                            'created_on' => date('Y-m-d H:i:s'), 'created_by' => $this->userId
+                        ]);
+                    }
                 }
             }
-            if (!empty($uploadData)) $this->crud_model->insertarr('news_images', $uploadData);
+            redirect($this->redirect . '/admin/all');
         }
+
+        $data = array_merge($this->data, [
+            'title'  => empty($id) ? 'Add ' . $this->title : 'Edit ' . $this->title,
+            'page'   => 'form',
+            'detail' => $this->crud_model->get_where_single($this->table, ['id' => $id]),
+            'gallery_images' => empty($id) ? [] : $this->crud_model->getData($this->imageTable, ['news_id' => $id, 'status !=' => '2'], [], 100, 0, '*', 'id ASC'),
+        ]);
+        $this->load->view('layouts/admin/index', $data);
     }
 
     public function soft_delete($id)
     {
-        $result = $this->crud_model->update($this->table, ['status' => '2'], ['id' => $id]);
-        $this->session->set_flashdata($result ? 'success' : 'error', $result ? 'Successfully Deleted.' : 'Unable To Delete.');
+        $data = ['status' => '2', 'updated_on' => date('Y-m-d H:i:s'), 'updated_by' => $this->userId];
+        $this->crud_model->update($this->table, $data, ['id' => $id]);
+        $this->crud_model->update($this->imageTable, $data, ['news_id' => $id]);
         redirect($this->redirect . '/admin/all');
     }
 }

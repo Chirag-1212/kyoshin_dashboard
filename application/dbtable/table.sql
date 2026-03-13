@@ -106,60 +106,6 @@ ADD CONSTRAINT `fk_service_to_category`
 FOREIGN KEY (`service_category_id`) REFERENCES `service_category`(`id`) 
 ON DELETE SET NULL ON UPDATE CASCADE;
 
--- Main news table
-CREATE TABLE news (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    title VARCHAR(255),
-    title_nepali VARCHAR(255),
-    slug VARCHAR(255),
-    description TEXT,
-    description_nepali TEXT,
-    datevalue DATE,
-    due_date DATE,
-    docpath VARCHAR(255),
-    coverimage VARCHAR(255),
-    is_slider ENUM('1', '2') NOT NULL DEFAULT '2',
-    imp_notice ENUM('1', '2') NOT NULL DEFAULT '2',
-    status ENUM('0', '1', '2') NOT NULL DEFAULT '1',
-    created_on DATETIME,
-    created_by INT,
-    updated_on DATE,
-    updated_by INT
-);
-
--- News gallery images table
-CREATE TABLE news_images (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    news_id INT,
-    docpath VARCHAR(255),
-    status TINYINT(1) DEFAULT 1,
-    created_on DATETIME
-);
-
--- Create a categories table
-CREATE TABLE news_categories (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    name VARCHAR(255) NOT NULL,
-    parent_id INT DEFAULT 0, -- Use this for sub-topics
-    status ENUM('0', '1', '2') DEFAULT '1'
-);
-
-ALTER TABLE news 
-ADD COLUMN category_id INT AFTER id,
-MODIFY COLUMN is_slider ENUM('1', '2') NOT NULL DEFAULT '2',
-MODIFY COLUMN imp_notice ENUM('1', '2') NOT NULL DEFAULT '2',
-MODIFY COLUMN status ENUM('0', '1', '2') NOT NULL DEFAULT '1';
-
-ALTER TABLE news_categories 
-ADD COLUMN created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-ADD COLUMN updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP;
-
-ALTER TABLE news 
-ADD COLUMN sub_topic VARCHAR(255) AFTER category_id,
-MODIFY COLUMN is_slider ENUM('1', '2') NOT NULL DEFAULT '2',
-MODIFY COLUMN imp_notice ENUM('1', '2') NOT NULL DEFAULT '2',
-MODIFY COLUMN status ENUM('0', '1', '2') NOT NULL DEFAULT '1';
-
 -- Main gallery table
 CREATE TABLE gallery (
     id INT(11) NOT NULL AUTO_INCREMENT,
@@ -201,3 +147,29 @@ CHANGE COLUMN IF EXISTS description_jp desc_jp TEXT NULL DEFAULT NULL;
 UPDATE job_category 
 SET slug = LOWER(REPLACE(title_en, ' ', '-')) 
 WHERE slug IS NULL OR slug = '';
+
+-- table to store news articles
+create table news (
+    id int auto_increment primary key,
+    title_en varchar(255),
+    title_jp varchar(255),
+    slug varchar(255),
+    desc_en text,
+    desc_jp text,
+    docpath varchar(255),
+    status tinyint default 1, -- 1: active, 2: deleted
+    created_on datetime,
+    created_by int,
+    updated_on datetime,
+    updated_by int
+);
+
+create table news_images (
+    id int auto_increment primary key,
+    news_id int,
+    docpath varchar(255),
+    status tinyint default 1, -- 1: active, 2: deleted
+    created_on datetime,
+    created_by int,
+    foreign key (news_id) references news(id) on delete cascade
+);
