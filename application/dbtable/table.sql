@@ -173,3 +173,24 @@ create table news_images (
     created_by int,
     foreign key (news_id) references news(id) on delete cascade
 );
+
+
+CREATE TABLE IF NOT EXISTS `banners` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `submitdt` date DEFAULT NULL,
+  `title` varchar(255) DEFAULT NULL,
+  `slug` varchar(191) NOT NULL, 
+  `docpath` varchar(255) DEFAULT NULL,
+  `target` varchar(50) DEFAULT NULL,
+  `border` int(11) DEFAULT 0,
+  `description` text DEFAULT NULL,
+  `status` tinyint(1) DEFAULT 1,
+  `type` varchar(10) DEFAULT 'ba',
+  `file_type` varchar(50) DEFAULT NULL,
+  `created_on` date DEFAULT NULL,
+  `created_by` int(11) DEFAULT NULL,
+  `updated_on` date DEFAULT NULL,
+  `updated_by` int(11) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `unique_slug` (`slug`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;

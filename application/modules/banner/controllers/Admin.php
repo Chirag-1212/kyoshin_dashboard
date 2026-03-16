@@ -3,215 +3,154 @@ defined('BASEPATH') or exit('No direct script access allowed');
 
 class Admin extends Auth_controller
 {
-	protected $userId;
-	protected $table;
-	protected $redirect;
-	protected $title;
-	public function __construct()
-	{
-		parent::__construct();
-		// var_dump($this->current_user);exit;
-		// $this->load->library('form_validation'); 
-		$this->table = 'banners';
-		$this->title = 'Banner';
-		$this->redirect = 'banner';
-		$this->userId = $this->data['userId'];
-	}
+    protected $userId;
+    protected $table;
+    protected $redirect;
+    protected $title;
 
-	public function all($page = '')
-	{
- 
-		$like = [];
-		$param = [
-			'status !=' => '2'
-		];
-		if($this->input->method() == 'get'){
-			$search = $this->input->get('table_search');
-			$like['Title'] = $search;
-		}
+    public function __construct()
+    {
+        parent::__construct();
+        $this->table = 'banners'; 
+        $this->title = 'Banner';
+        $this->redirect = 'banner'; 
+        $this->userId = $this->data['userId'];
+    }
 
-		$total = $this->crud_model->total($this->table, $param, $like);
-		$config['base_url'] = base_url($this->redirect . '/admin/all');
-		$config['total_rows'] = $total;
-		$config['uri_segment'] = 4;
-		$config['per_page'] = 10;
+public function all($page = '')
+    {
+        $like = [];
+        $param = ['status !=' => '2'];
 
-		$config['full_tag_open'] = '<ul class="pagination pagination-sm m-0 float-right">';
+        // Search logic
+        $search = $this->input->get('table_search');
+        if ($search) {
+            $like['title'] = $search;
+        }
 
-		//go to first link customize
-		$config['first_link'] = 'First';
-		$config['first_tag_open'] = '<li class="page-item">';
-		$config['first_tag_close'] = '</li>';
+        $total = $this->crud_model->total($this->table, $param, $like);
+        
+        $config = [
+            'base_url'    => base_url($this->redirect . '/admin/all'),
+            'total_rows'  => $total,
+            'per_page'    => 10,
+            'uri_segment' => 4,
+            'suffix'      => $search ? "?table_search=$search" : ''
+        ];
 
-		//for all list outside of the a tag that is <li></li>
-		$config['num_tag_open'] = '<li class="page-item">';
-		//to add class to attribute
-		$config['attributes'] = array('class' => 'page-link');
-		$config['num_tag_close'] = '</li>';
+        $this->pagination->initialize($config);
+        
+        $items = $this->crud_model->getData($this->table, $param, $like, $config["per_page"], $page, '*', 'id DESC');
+        
+        // Ensure this array is closed correctly with ] and );
+        $data = array_merge($this->data, [
+            'title'            => $this->title,
+            'page'             => 'list',
+            'list'             => $items,
+            'redirect'         => $this->redirect,
+            'form_link'        => $this->redirect . '/admin/form', 
+            'form_check_value' => 'form', 
+            'pagination'       => $this->pagination->create_links(),
+            'offset'           => (int)$page
+        ]);
+        
+        $this->load->view('layouts/admin/index', $data);
+    }
 
-		$config['next_link'] = 'Next';
-		$config['next_tag_open'] = '<li class="page-item">';
-		$config['next_tag_close'] = '</li>';
+    public function form($id = '')
+    {
+        $detail = $this->crud_model->get_where_single($this->table, ['id' => $id]);
+        $upload_path = 'uploads/banners/';
 
-		$config['prev_link'] = 'Prev';
-		$config['prev_tag_open'] = '<li class="page-item">';
-		$config['prev_tag_close'] = '</li>';
+        if ($this->input->post()) {
+            $this->form_validation->set_rules('submitdt', 'Date', 'required|trim');
+            $this->form_validation->set_rules('title', 'Title', 'required|trim');
 
-		//customize current page
-		$config['cur_tag_open'] = '<li class="page-item active"><a class="page-link">';
-		$config['cur_tag_close'] = '</a></li>';
+            if ($this->form_validation->run()) {
+                $id = $this->input->post('id');
+                $file_name = $this->input->post('old_docpath'); 
+                
+                // Automatically generate slug from title
+                $slug = url_title($this->input->post('title'), 'dash', TRUE);
 
-		$config['last_link'] = 'Last';
-		$config['last_tag_open'] = '<li class="page-item">';
-		$config['last_tag_close'] = '</li>';
+                if (!empty($_FILES['docpath']['name'])) {
+                    if (!is_dir($upload_path)) mkdir($upload_path, 0777, true);
 
-		$config['full_tag_close'] = '</ul>';
-		$config['suffix'] = isset($search)?"?table_search=$search":'';
-		$this->pagination->initialize($config);
+                    $config = [
+                        'upload_path'   => './' . $upload_path,
+                        'allowed_types' => 'jpeg|jpg|gif|png|pdf|mp4|webp|webm',
+                        'encrypt_name'  => TRUE,
+                        'max_size'      => '30000'
+                    ];
 
-		$page = ($this->uri->segment(4)) ? $this->uri->segment(4) : 0;
-		$items = $this->crud_model->getData($this->table, $param, $like, $config["per_page"], $page, '*', 'SubmitDt DESC');
-		
-		$data = array_merge($this->data, [
-			'title' => $this->title,
-			'page' => 'list',
-			'items' => $items,
-			'redirect' => $this->redirect,
-			'form_link' => $this->redirect . '/admin/form/',
-			'form_check_value' => 'form',
-			'delete_link' => $this->redirect . '/admin/soft_delete/',
-			'delete_check_value' => 'soft_delete',
-			'pagination' =>  $this->pagination->create_links(),
-			'banner' => 'banner-all',
-			'offset' => $page
-		]);
-		
-		$this->load->view('layouts/admin/index', $data);
-	}
+                    $this->load->library('upload', $config);
+                    $this->upload->initialize($config);
 
-	public function form($id = '')
-	{
-		$data['detail'] = $this->crud_model->get_where_single($this->table, array('id' => $id));
-		$upload_path='uploads/banners/';
-		if ($this->input->post()) {
-			// echo "<pre>";
-			// var_dump($this->input->post());
-			// exit;
-			$this->form_validation->set_rules('SubmitDt', 'Date', 'required|trim');
-			$this->form_validation->set_rules('Title', 'Title', 'required|trim');
-			if ($this->form_validation->run()) {
-				$id = $this->input->post('id');
+                    if ($this->upload->do_upload('docpath')) {
+                        $uploadData = $this->upload->data();
+                        $file_name = $upload_path . $uploadData['file_name'];
+                    } else {
+                        $this->session->set_flashdata('error', $this->upload->display_errors());
+                        redirect($this->redirect . '/admin/form/' . $id);
+                    }
+                }
 
+                $saveData = [
+                    'submitdt'    => $this->input->post('submitdt'),
+                    'title'       => $this->input->post('title'),
+                    'slug'        => $slug,
+                    'docpath'     => $file_name,
+                    'target'      => $this->input->post('target') ?: NULL,
+                    'border'      => $this->input->post('border'),
+                    'description' => $this->input->post('description'),
+                    'status'      => $this->input->post('status'),
+                    'type'        => 'ba',
+                    'file_type'   => $this->input->post('file_type'),
+                ];
 
+                if (empty($id)) {
+                    $saveData['created_on'] = date('Y-m-d');
+                    $saveData['created_by'] = $this->userId;
+                    $this->crud_model->insert($this->table, $saveData);
+                    $this->session->set_flashdata('success', 'Inserted successfully.');
+                } else {
+                    $saveData['updated_on'] = date('Y-m-d');
+                    $saveData['updated_by'] = $this->userId;
+                    $this->crud_model->update($this->table, $saveData, ['id' => $id]);
+                    $this->session->set_flashdata('success', 'Updated successfully.');
+                }
+                redirect($this->redirect . '/admin/all');
+            }
+        }
 
-				if (strlen($_FILES['DocPath']['name']) > 0) {
+        $data = array_merge($this->data, [
+            'title'    => (empty($id) ? 'Add ' : 'Edit ') . $this->title,
+            'page'     => 'form',
+            'detail'   => $detail,
+            'redirect' => $this->redirect
+        ]);
+        
+        $this->load->view('layouts/admin/index', $data);
+    }
 
-					$fileExt = pathinfo($_FILES["DocPath"]["name"], PATHINFO_EXTENSION);
+public function soft_delete($id)
+{
+    // Perform a soft delete: update status to 2 instead of deleting the row
+    $data = [
+        'status'     => '2',
+        'updated_by' => $this->userId, 
+        'updated_on' => date('Y-m-d') // Changed from 'updated' to 'updated_on' to match your form logic
+    ];
+    
+    $this->db->where('id', $id);
+    $result = $this->db->update($this->table, $data); // Use update, not delete
 
-					// echo "<pre>";
-					// var_dump($fileExt);
-					// exit;
-
-					$config['upload_path'] = $upload_path;
-
-					$config['allowed_types'] = 'jpeg|jpg|gif|png|pdf|mp4|webp|webm';
-
-					if ($fileExt == 'mp4' | $fileExt == 'webm') {
-						$config['max_size'] = '30000';
-					} else {
-						$config['max_size'] = '25000';
-					}
-					$this->load->library('upload', $config);
-
-					if (!$this->upload->do_upload('DocPath')) {
-
-						$this->session->set_flashdata('error', $this->upload->display_errors());
-						if ($id == '') {
-							redirect($this->redirect . '/admin/form');
-						} else {
-							redirect($this->redirect . '/admin/form/' . $id);
-						}
-					} else {
-
-						$file = $this->upload->data();
-
-						$file_name = $upload_path.$file['file_name'];
-					}
-				} else {
-					if (isset($data['detail']->DocPath) && $data['detail']->DocPath != '') {
-						$file_name = $data['detail']->DocPath;
-					} else {
-						$file_name = "";
-					}
-				}
-
-				$data = array(
-
-					'SubmitDt' => $this->input->post('SubmitDt'),
-					'Title' => $this->input->post('Title'),
-					'DocPath' => $file_name,
-					'Target' => $this->input->post('Target') ? $this->input->post('Target') : NULL,
-					'BOrder' => $this->input->post('BOrder'),
-					'Description' => $this->input->post('Description'),
-					'status' => $this->input->post('status'),
-					'Type' => 'BA',
-					'file_type' => $this->input->post('file_type'),
-
-				);
-
-				if ($id == '') {
-					$data['created_on'] = date('Y-m-d');
-					$data['created_by'] = $this->userId;
-					$result = $this->crud_model->insert($this->table, $data);
-					if ($result == true) {
-						$this->session->set_flashdata('success', 'Successfully Inserted.');
-						redirect($this->redirect . '/admin/all');
-					} else {
-						$this->session->set_flashdata('error', 'Unable To Insert.');
-						redirect($this->redirect . '/admin/form');
-					}
-				} else {
-					$data['updated_on'] = date('Y-m-d');
-					$data['updated_by'] = $this->userId;
-					$result = $this->crud_model->update($this->table, $data, array('id' => $id));
-					if ($result == true) {
-						$this->session->set_flashdata('success', 'Successfully Updated.');
-						redirect($this->redirect . '/admin/all');
-					} else {
-						$this->session->set_flashdata('error', 'Unable To Update.');
-						redirect($this->redirect . '/admin/form/' . $id);
-					}
-				}
-			}
-		}
-		if ($data['detail']) {
-			$data['title'] = 'Edit ' . $this->title;
-		} else {
-			$data['title'] = 'Add ' . $this->title;
-		}
-		$data['banner'] = 'banner-form';
-		$data['page'] = 'form';
-		$data = array_merge($this->data, $data);
-		
-		$this->load->view('layouts/admin/index', $data);
-	}
-
-	public function soft_delete($id)
-	{
-		if ($id == '' || $id == 0) {
-			$this->session->set_flashdata('error', 'Select Atleast One');
-			redirect($this->redirect . '/admin/all');
-		}
-		$data = array(
-			'status' => '2',
-		);
-		$result = $this->crud_model->update($this->table, $data, array('id' => $id));
-		if ($result == true) {
-			$this->session->set_flashdata('success', 'Successfully Deleted.');
-			redirect($this->redirect . '/admin/all');
-		} else {
-			$this->session->set_flashdata('error', 'Unable To Delete.');
-			redirect($this->redirect . '/admin/all');
-		}
-	}
+    if ($result) {
+        $this->session->set_flashdata('success', 'Successfully Deleted.');
+    } else {
+        $this->session->set_flashdata('error', 'Unable To Delete.');
+    }
+    // Added missing slash
+    redirect($this->redirect . '/admin/all');
+}
 }

@@ -1,134 +1,83 @@
 <section class="content">
-    <div class="row">
-        <div class="col-md-12">
-            <form class="all_form" method="post" action enctype="multipart/form-data">
-                <div class="box box-default">
-                    <div class="box-header">
-                        <h3 class="box-title"><?php echo $title ?></h3>
-
-                        <div class="box-tools pull-right">
-                            <button type="button" class="btn btn-box-tool" data-widget="collapse"><i
-                                    class="fa fa-minus"></i></button>
-                            <button type="button" class="btn btn-box-tool" data-widget="remove"><i
-                                    class="fa fa-remove"></i></button>
+    <div class="box box-primary">
+        <div class="box-header with-border">
+            <h3 class="box-title"><?php echo $title; ?></h3>
+        </div>
+        <form role="form" method="post" enctype="multipart/form-data">
+            <input type="hidden" name="id" value="<?php echo $detail->id ?? ''; ?>">
+            
+            <div class="box-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>Date</label>
+                            <input type="date" name="submitdt" class="form-control" value="<?php echo $detail->submitdt ?? date('Y-m-d'); ?>" required>
                         </div>
                     </div>
-                    <div class="box-body">
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label>Date <span class="req">*</span></label>
-                                    <input type="date" name="SubmitDt" class="form-control" id="SubmitDt"
-                                        placeholder="Submit Date"
-                                        value="<?php echo set_value('SubmitDt', (((isset($detail->SubmitDt)) && $detail->SubmitDt != '') ? $detail->SubmitDt : date('Y-m-d'))); ?>"
-                                        required>
-                                    <?php echo form_error('SubmitDt', '<div class="error_message">', '</div>'); ?>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label>File</label>
-                                    <input type="file" name="DocPath" class="form-control" id="DocPath"
-                                        placeholder="File" value="">
-                                    <?php echo form_error('DocPath', '<div class="error_message">', '</div>');
-                ?>
-                                    <?php echo (isset($detail->DocPath) && $detail->DocPath != '') ? "<a href='" . base_url() . $detail->DocPath . "' class='btn btn-sm btn-info' style='float: right;' target='_blank'>View File</a>" : ''
-                ?>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label>Title <span class="req">*</span></label>
-                                    <input type="text" name="Title" class="form-control" id="Title" placeholder="Title"
-                                        value="<?php echo set_value('Title', (((isset($detail->Title)) && $detail->Title != '') ? $detail->Title : '')); ?>"
-                                        required>
-                                    <?php echo form_error('Title', '<div class="error_message">', '</div>'); ?>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label>Order (Highest Order First)</label>
-                                    <input type="number" name="BOrder" class="form-control" id="BOrder"
-                                        placeholder="Order"
-                                        value="<?php echo set_value('BOrder', (((isset($detail->BOrder)) && $detail->BOrder != '') ? $detail->BOrder : '')); ?>">
-                                    <?php echo form_error('BOrder', '<div class="error_message">', '</div>'); ?>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label>Open in Window</label>
-                                    <select name="Target" class="form-control select2" id="Target">
-                                        <option>Select One</option>
-                                        <option value="_blank"
-                                            <?php echo  set_select('Target', '_blank', (isset($detail->Target) && $detail->Target == '_blank') ? TRUE : ''); ?>>
-                                            New Tab</option>
-                                        <option value="new"
-                                            <?php echo  set_select('Target', 'new', (isset($detail->Target) && $detail->Target == 'new') ? TRUE : ''); ?>>
-                                            New Window</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label>File Type</label>
-                                    <select name="file_type" class="form-control select2" id="file_type">
-                                        <option>Select One</option>
-                                        <option value="video"
-                                            <?php echo  set_select('file_type', 'video', (isset($detail->file_type) && $detail->file_type == 'video') ? TRUE : ''); ?>>
-                                            Video</option>
-                                        <option value="image"
-                                            <?php echo  set_select('file_type', 'image', (isset($detail->file_type) && $detail->file_type == 'image') ? TRUE : ''); ?>>
-                                            Image</option>
-                                        <option value="digital_slider"
-                                            <?php echo  set_select('file_type', 'digital_slider', (isset($detail->file_type) && $detail->file_type == 'digital_slider') ? TRUE : ''); ?>>
-                                            Digital Slider</option>
-                                    </select>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-12">
-                                <div class="form-group">
-                                    <label>Description</label>
-                                    <textarea name="Description" id="description" class="form-control" rows="5"
-                                        cols="80"
-                                        autocomplete="off"><?php echo (((isset($detail->Description)) && $detail->Description != '') ? $detail->Description : '') ?></textarea>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-4">
-                                <div class="form-group">
-                                    <label>Status</label>
-                                    <select name="status" class="form-control select2" id="status">
-                                        <option value="1"
-                                            <?php echo  set_select('status', '1', (isset($detail->status) && $detail->status == '1') ? TRUE : ''); ?>>
-                                            Active</option>
-                                        <option value="0"
-                                            <?php echo  set_select('status', '0', (isset($detail->status) && $detail->status == '0') ? TRUE : ''); ?>>
-                                            Inactive</option>
-                                    </select>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-4">
-                                <div class="form-group">
-                                    <input type="submit" name="submit" class="form-control btn btn-sm btn-primary"
-                                        id="submit" value="Save">
-                                    <input type="hidden" name="id" class="form-control btn btn-sm btn-primary"
-                                        id="submit"
-                                        value="<?php echo (((isset($detail->id)) && $detail->id != '') ? $detail->id : '') ?>">
-                                </div>
-                            </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>Title</label>
+                            <input type="text" name="title" class="form-control" placeholder="Enter title" value="<?php echo $detail->title ?? ''; ?>" required>
                         </div>
                     </div>
                 </div>
-            </form>
-        </div>
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>Banner File</label>
+                            <input type="file" name="docpath"> <input type="hidden" name="old_docpath" value="<?php echo $detail->docpath ?? ''; ?>">
+                            <?php if(!empty($detail->docpath)): ?>
+                                <p class="help-block"><a href="<?php echo base_url($detail->docpath); ?>" target="_blank">View current file</a></p>
+                            <?php endif; ?>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>File Type</label>
+                            <select name="file_type" class="form-control"> <option value="image" <?php echo (isset($detail->file_type) && $detail->file_type == 'image') ? 'selected' : ''; ?>>Image</option>
+                                <option value="video" <?php echo (isset($detail->file_type) && $detail->file_type == 'video') ? 'selected' : ''; ?>>Video</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label>Order</label>
+                            <input type="number" name="border" class="form-control" value="<?php echo $detail->border ?? 0; ?>">
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label>Target</label>
+                            <select name="target" class="form-control">
+                                <option value="_self" <?php echo (isset($detail->target) && $detail->target == '_self') ? 'selected' : ''; ?>>Same Window</option>
+                                <option value="_blank" <?php echo (isset($detail->target) && $detail->target == '_blank') ? 'selected' : ''; ?>>New Tab</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label>Status</label>
+                            <select name="status" class="form-control">
+                                <option value="1" <?php echo (isset($detail->status) && $detail->status == '1') ? 'selected' : ''; ?>>Active</option>
+                                <option value="0" <?php echo (isset($detail->status) && $detail->status == '0') ? 'selected' : ''; ?>>Inactive</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Description</label>
+                    <textarea name="description" class="form-control" rows="3"><?php echo $detail->description ?? ''; ?></textarea>
+                </div>
+            </div>
+            
+            <div class="box-footer">
+                <button type="submit" class="btn btn-primary">Submit</button>
+            </div>
+        </form>
     </div>
 </section>
