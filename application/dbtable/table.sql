@@ -210,3 +210,22 @@ CREATE TABLE `count` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `unique_slug` (`slug`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE testimonials (
+    id INT(11) NOT NULL AUTO_INCREMENT,
+    title VARCHAR(255) NOT NULL,
+    title_jp VARCHAR(255) DEFAULT NULL,
+    sub_title VARCHAR(255) DEFAULT NULL,
+    sub_title_jp VARCHAR(255) DEFAULT NULL,
+    slug VARCHAR(255) NOT NULL,
+    doc_path VARCHAR(255) DEFAULT NULL,
+    description TEXT DEFAULT NULL,
+    description_nepali TEXT DEFAULT NULL,
+    status TINYINT(1) DEFAULT 1 COMMENT '0:inactive, 1:active, 2:deleted',
+    created_on DATE DEFAULT NULL,
+    created_by INT(11) DEFAULT NULL,
+    updated_on DATE DEFAULT NULL,
+    updated_by INT(11) DEFAULT NULL,
+    PRIMARY KEY (id),
+    UNIQUE KEY unique_slug (slug(191)) -- Added (191) to fix the key length error
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;

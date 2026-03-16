@@ -1,119 +1,113 @@
 <section class="content">
     <div class="row">
         <div class="col-md-12">
-            <form class="all_form" method="post" action enctype="multipart/form-data">
-                <div class="box box-default">
-                    <div class="box-header">
-                        <h3 class="box-title"><?php echo $title ?></h3>
-
-                        <div class="box-tools pull-right">
-                            <button type="button" class="btn btn-box-tool" data-widget="collapse"><i
-                                    class="fa fa-minus"></i></button>
-                            <button type="button" class="btn btn-box-tool" data-widget="remove"><i
-                                    class="fa fa-remove"></i></button>
-                        </div>
+            <div class="box box-default">
+                <div class="box-header">
+                    <h3 class="box-title"><?php echo $title; ?></h3>
+                    <div class="box-tools pull-right">
+                        <button type="button" class="btn btn-box-tool" data-widget="collapse">
+                            <i class="fa fa-minus"></i>
+                        </button>
+                        <button type="button" class="btn btn-box-tool" data-widget="remove">
+                            <i class="fa fa-remove"></i>
+                        </button>
                     </div>
+                </div>
+                
+                <form class="all_form" method="post" action="" enctype="multipart/form-data">
                     <div class="box-body">
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label>Name <span class="req">*</span></label>
-                                    <input type="text" name="Title" class="form-control" id="Title" placeholder="Title"
-                                        value="<?php echo set_value('Title', (((isset($detail->Title)) && $detail->Title != '') ? $detail->Title : '')); ?>"
+                                    <label>Title <span class="req">*</span></label>
+                                    <input type="text" name="title" class="form-control" id="title" placeholder="title"
+                                        value="<?php echo set_value('title', (isset($detail->title) ? $detail->title : '')); ?>"
                                         required>
-                                    <?php echo form_error('Title', '<div class="error_message">', '</div>'); ?>
+                                    <?php echo form_error('title', '<div class="error_message">', '</div>'); ?>
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label>Name Nepali</label>
-                                    <input type="text" name="TitleNepali" class="form-control" id="TitleNepali"
-                                        placeholder="Title Nepali"
-                                        value="<?php echo set_value('TitleNepali', (((isset($detail->TitleNepali)) && $detail->TitleNepali != '') ? $detail->TitleNepali : '')); ?>">
-                                    <?php echo form_error('TitleNepali', '<div class="error_message">', '</div>'); ?>
+                                    <label>Title Japanese</label>
+                                    <input type="text" name="title_jp" class="form-control" id="title_jp"
+                                        placeholder="title japanese"
+                                        value="<?php echo set_value('title_jp', (isset($detail->title_jp) ? $detail->title_jp : '')); ?>">
+                                    <?php echo form_error('title_jp', '<div class="error_message">', '</div>'); ?>
                                 </div>
                             </div>
                         </div>
+                        
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label>Subtitle</label>
-                                    <input type="text" name="SubTitle" class="form-control" id="SubTitle"
-                                        placeholder="Subtitle"
-                                        value="<?php echo set_value('SubTitle', (((isset($detail->SubTitle)) && $detail->SubTitle != '') ? $detail->SubTitle : '')); ?>">
-                                    <?php echo form_error('SubTitle', '<div class="error_message">', '</div>'); ?>
+                                    <input type="text" name="sub_title" class="form-control" id="sub_title"
+                                        placeholder="subtitle"
+                                        value="<?php echo set_value('sub_title', (isset($detail->sub_title) ? $detail->sub_title : '')); ?>">
+                                    <?php echo form_error('sub_title', '<div class="error_message">', '</div>'); ?>
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label>Subtitle Nepali</label>
-                                    <input type="text" name="SubTitleNepali" class="form-control" id="SubTitleNepali"
-                                        placeholder="Subtitle Nepali"
-                                        value="<?php echo set_value('SubTitleNepali', (((isset($detail->SubTitleNepali)) && $detail->SubTitleNepali != '') ? $detail->SubTitleNepali : '')); ?>">
-                                    <?php echo form_error('SubTitleNepali', '<div class="error_message">', '</div>'); ?>
+                                    <label>Subtitle Japanese</label>
+                                    <input type="text" name="sub_title_jp" class="form-control" id="sub_title_jp"
+                                        placeholder="subtitle japanese"
+                                        value="<?php echo set_value('sub_title_jp', (isset($detail->sub_title_jp) ? $detail->sub_title_jp : '')); ?>">
+                                    <?php echo form_error('sub_title_jp', '<div class="error_message">', '</div>'); ?>
                                 </div>
                             </div>
                         </div>
+                        
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label>Image</label>
-                                    <input type="file" name="DocPath" class="form-control" id="DocPath"
-                                        placeholder="File" value="">
-                                    <?php echo form_error('DocPath', '<div class="error_message">', '</div>');
-                ?>
-                                    <?php echo (isset($detail->DocPath) && $detail->DocPath != '') ? "<a href='" . base_url() . $doc_path . $detail->DocPath . "' class='btn btn-sm btn-info' style='float: right;' target='_blank'>View File</a>" : ''
-                ?>
+                                    <input type="file" name="doc_path" class="form-control" id="doc_path">
+                                    <input type="hidden" name="old_doc_path" value="<?php echo isset($detail->doc_path) ? $detail->doc_path : ''; ?>">
+                                    
+                                    <?php if (isset($detail->doc_path) && $detail->doc_path != ''): ?>
+                                        <br>
+                                        <a href="<?php echo base_url($detail->doc_path); ?>" class="btn btn-sm btn-info" target="_blank">view current file</a>
+                                    <?php endif; ?>
+                                    <?php echo form_error('doc_path', '<div class="error_message">', '</div>'); ?>
                                 </div>
                             </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label>Description</label>
-                                    <textarea name="Description" id="descriptions" class="form-control" rows="5"
-                                        cols="80" autocomplete="off"
-                                        required><?php echo (((isset($detail->Description)) && $detail->Description != '') ? $detail->Description : '') ?></textarea>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label>Description Nepali</label>
-                                    <textarea name="DescriptionNepalis" id="DescriptionNepalis" class="form-control"
-                                        rows="5" cols="100"
-                                        autocomplete="off"><?php echo (((isset($detail->DescriptionNepali)) && $detail->DescriptionNepali != '') ? $detail->DescriptionNepali : '') ?></textarea>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row">
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label>Status</label>
                                     <select name="status" class="form-control select2" id="status">
-                                        <option value="1"
-                                            <?php echo  set_select('status', '1', (isset($detail->status) && $detail->status == '1') ? TRUE : ''); ?>>
-                                            Active</option>
-                                        <option value="0"
-                                            <?php echo  set_select('status', '0', (isset($detail->status) && $detail->status == '0') ? TRUE : ''); ?>>
-                                            Inactive</option>
+                                        <option value="1" <?php echo set_select('status', '1', (isset($detail->status) && $detail->status == '1')); ?>>active</option>
+                                        <option value="0" <?php echo set_select('status', '0', (isset($detail->status) && $detail->status == '0')); ?>>inactive</option>
                                     </select>
                                 </div>
                             </div>
                         </div>
+                        
                         <div class="row">
-                            <div class="col-md-4">
+                            <div class="col-md-6">
                                 <div class="form-group">
-                                    <input type="submit" name="submit" class="form-control btn btn-sm btn-primary"
-                                        id="submit" value="Save">
-                                    <input type="hidden" name="id" class="form-control btn btn-sm btn-primary"
-                                        id="submit"
-                                        value="<?php echo (((isset($detail->id)) && $detail->id != '') ? $detail->id : '') ?>">
+                                    <label>Description</label>
+                                    <textarea name="description" id="description" class="form-control" rows="5"
+                                        required><?php echo set_value('description', (isset($detail->description) ? $detail->description : '')); ?></textarea>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>Description Japanese</label>
+                                    <textarea name="description_jp" id="description_jp" class="form-control"
+                                        rows="5"><?php echo set_value('description_jp', (isset($detail->description_jp) ? $detail->description_jp : '')); ?></textarea>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
-            </form>
+                    
+                    <div class="box-footer">
+                        <input type="hidden" name="id" value="<?php echo isset($detail->id) ? $detail->id : ''; ?>">
+                        <input type="submit" name="submit" class="btn btn-primary" id="submit" value="save">
+                        <a href="<?php echo base_url($redirect . '/admin/all'); ?>" class="btn btn-default">cancel</a>
+                    </div>
+                </form>
+            </div>
         </div>
     </div>
 </section>
