@@ -17,12 +17,12 @@
                 <table class="table table-bordered table-striped mt-3">
                     <thead>
                         <tr>
-                            <th>id</th>
-                            <th>image</th>
-                            <th>title (en)</th>
-                            <th>title (jp)</th>
-                            <th>status</th>
-                            <th>actions</th>
+                            <th>S.N.</th>
+                            <th>Image</th>
+                            <th>Title (EN)</th>
+                            <th>Title (JP)</th>
+                            <th>Status</th>
+                            <th>Actions</th>
                         </tr>
                     </thead>
                     <tbody>

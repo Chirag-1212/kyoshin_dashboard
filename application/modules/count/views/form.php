@@ -17,7 +17,7 @@
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label>title <span class="req">*</span></label>
+                                    <label>Title <span class="req">*</span></label>
                                     <input type="text" name="title" class="form-control" id="title" placeholder="title"
                                         value="<?php echo set_value('title', (isset($detail->title) ? $detail->title : '')); ?>"
                                         required>
@@ -26,7 +26,7 @@
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label>title japanese</label>
+                                    <label>Title Japanese</label>
                                     <input type="text" name="title_jp" class="form-control" id="title_jp"
                                         placeholder="title japanese"
                                         value="<?php echo set_value('title_jp', (isset($detail->title_jp) ? $detail->title_jp : '')); ?>">
@@ -37,7 +37,7 @@
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label>number </label>
+                                    <label>Number </label>
                                     <input type="number" name="number" class="form-control" id="number"
                                         placeholder="number"
                                         value="<?php echo set_value('number', (isset($detail->number) ? $detail->number : '')); ?>">
@@ -46,7 +46,7 @@
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label>number japanese</label>
+                                    <label>Number Japanese</label>
                                     <input type="text" name="number_jp" class="form-control" id="number_jp"
                                         placeholder="number japanese"
                                         value="<?php echo set_value('number_jp', (isset($detail->number_jp) ? $detail->number_jp : '')); ?>">
@@ -57,14 +57,14 @@
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label>status</label>
+                                    <label>Status</label>
                                     <select name="status" class="form-control select2" id="status">
                                         <option value="1"
                                             <?php echo set_select('status', '1', (isset($detail->status) && $detail->status == '1') ? TRUE : ''); ?>>
-                                            active</option>
+                                            Active</option>
                                         <option value="0"
                                             <?php echo set_select('status', '0', (isset($detail->status) && $detail->status == '0') ? TRUE : ''); ?>>
-                                            inactive</option>
+                                            Inactive</option>
                                     </select>
                                 </div>
                             </div>
@@ -78,7 +78,7 @@
                                     
                                     <a href="<?php echo base_url($redirect); ?>" 
                                        class="btn btn-sm btn-default" 
-                                       style="margin-left: 5px;">cancel</a>
+                                       style="margin-left: 5px;">Cancel</a>
                                 </div>
                                 
                                 <input type="hidden" name="id"

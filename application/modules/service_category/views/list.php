@@ -24,11 +24,11 @@
                     <table class="table table-bordered table-responsive">
                         <thead>
                             <tr>
-                                <th>sn</th>
-                                <th>category title</th>
-                                <th>parent</th>
-                                <th>status</th>
-                                <th>action</th>
+                                <th>S.N.</th>
+                                <th>Category Title</th>
+                                <th>Parent</th>
+                                <th>Status</th>
+                                <th>Action</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -49,9 +49,9 @@
                                     </td>
                                     <td>
                                         <?php if ($row->status == '1'): ?>
-                                            <span class="label label-success">active</span>
+                                            <span class="label label-success">Active</span>
                                         <?php else: ?>
-                                            <span class="label label-danger">inactive</span>
+                                            <span class="label label-danger">Inactive</span>
                                         <?php endif; ?>
                                     </td>
                                     <td>

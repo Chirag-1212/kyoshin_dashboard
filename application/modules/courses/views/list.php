@@ -29,7 +29,7 @@
                     <table class="table table-bordered table-responsive">
                         <thead>
                             <tr>
-                                <th>SN</th>
+                                <th>S.N.</th>
                                 <th>Image</th>
                                 <th>Course Name</th>
                                 <th>Sub-Level</th>

@@ -13,13 +13,13 @@
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label>title(english)</label>
+                                    <label>Title(English)</label>
                                     <input type="text" name="title_en" class="form-control" value="<?= @$detail->title_en ?>" required>
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label>title(japanese)</label>
+                                    <label>Title(Japanese)</label>
                                     <input type="text" name="title_jn" class="form-control" value="<?= @$detail->title_jn ?>">
                                 </div>
                             </div>
@@ -28,7 +28,7 @@
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label>cover image</label>
+                                    <label>Cover Image</label>
                                     <input type="file" name="coverimage" class="form-control">
                                     <?php if (@$detail->coverimage): ?>
                                         <img src="<?= base_url(@$detail->coverimage) ?>" class="img-fluid mt-2" style="max-height: 200px;">
@@ -37,10 +37,10 @@
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label>status</label>
+                                    <label>Status</label>
                                     <select name="status" class="form-control">
-                                        <option value="1" <?= @$detail->status == '1' ? 'selected' : '' ?>>active</option>
-                                        <option value="0" <?= @$detail->status == '0' ? 'selected' : '' ?>>inactive</option>
+                                        <option value="1" <?= @$detail->status == '1' ? 'selected' : '' ?>>Active</option>
+                                        <option value="0" <?= @$detail->status == '0' ? 'selected' : '' ?>>Inactive</option>
                                     </select>
                                 </div>
                             </div>
@@ -49,7 +49,7 @@
                         <div class="row">
                             <div class="col-md-12">
                                 <div class="form-group">
-                                    <label>description</label>
+                                    <label>Description</label>
                                     <textarea name="description" class="form-control" rows="5"><?= @$detail->description ?></textarea>
                                 </div>
                             </div>
@@ -60,8 +60,8 @@
                         <div class="box-footer">
                             <div class="row">
                                 <div class="col-md-12">
-                                    <button type="submit" class="btn btn-primary btn-flat">save</button>
-                                    <a href="<?php echo base_url($redirect . '/admin/all'); ?>" class="btn btn-default btn-flat">cancel</a>
+                                    <button type="submit" class="btn btn-primary btn-flat">Save</button>
+                                    <a href="<?php echo base_url($redirect . '/admin/all'); ?>" class="btn btn-default btn-flat">Cancel</a>
                                 </div>
                             </div>
                         </div>

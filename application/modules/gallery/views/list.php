@@ -4,7 +4,7 @@
             <div class="box">
                 <div class="box-header">
                     <h3 class="box-title">
-                        <a href="<?php echo base_url($redirect . '/admin/form'); ?>" class="btn btn-sm btn-primary">add new</a>
+                        <a href="<?php echo base_url($redirect . '/admin/form'); ?>" class="btn btn-sm btn-primary">Add New</a>
                     </h3>
                     <div class="box-tools">
                         <form action="" method="get">
@@ -22,12 +22,13 @@
                     <table class="table table-bordered table-hover">
                        <thead>
                         <tr>
-                            <th style="width: 50px;">sn</th>
-                            <th>title(en)</th>
-                            <th>title(jp)</th> <th>image</th>
-                            <th>created</th>
-                            <th>status</th>
-                            <th style="width: 100px;">action</th>
+                            <th style="width: 50px;">S.N.</th>
+                            <th>Title(en)</th>
+                            <th>Title(jp)</th>
+                            <th >Image</th>
+                            <th>Created</th>
+                            <th>Status</th>
+                            <th style="width: 100px;">Action</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -39,7 +40,7 @@
                                         <?php if (!empty($value->coverimage)): ?>
                                             <img src="<?php echo base_url($value->coverimage); ?>" style="max-height: 50px; border-radius: 4px;">
                                         <?php else: ?>
-                                            <span class="text-muted small">no image</span>
+                                            <span class="text-muted small">No Image</span>
                                         <?php endif; ?>
                                     </td>
                                     <td><?php echo $value->created; ?></td>
