@@ -6,8 +6,12 @@
                     <h3 class="box-title">
                         <a class="btn btn-sm btn-primary">Application View</a>
                     </h3>
+                    <div class="box-tools pull-right">
+                        <a href="<?php echo base_url($redirect . '/admin/all'); ?>" class="btn btn-sm btn-default">
+                            <i class="fa fa-list"></i> Back to List
+                        </a>
+                    </div>
                 </div>
-                <!-- /.box-header -->
                 <div class="box-body">
                     <div class="application_view">
                         <ul>
@@ -24,10 +28,10 @@
                                 <p>Contact : <span><?php echo $detail->phone; ?></span></p>
                             </li>
                             <li>
-                                <p>Message : <span><?php echo $detail->message; ?></span></p>
+                                <p>Message : <span><?php echo nl2br($detail->message); ?></span></p>
                             </li>
                             <li>
-                                <p>Created On : <span><?php echo $detail->created_on; ?></span></p>
+                                <p>Created On : <span><?php echo ($detail->created_on != '0000-00-00') ? $detail->created_on : '-'; ?></span></p>
                             </li>
                         </ul>
                     </div>

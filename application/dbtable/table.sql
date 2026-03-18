@@ -229,3 +229,16 @@ CREATE TABLE testimonials (
     PRIMARY KEY (id),
     UNIQUE KEY unique_slug (slug(191)) -- Added (191) to fix the key length error
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+create table `feedback_message` (
+  `id` int(11) not null auto_increment,
+  `fullname` varchar(255) default null,
+  `email` varchar(255) default null,
+  `phone` varchar(50) default null,
+  `address` varchar(255) default null,
+  `message` text default null,
+  `status` enum('1','2') not null default '1' comment '1=active, 2=deleted',
+  `created_on` date default null,
+  `updated_on` date default null,
+  primary key (`id`)
+) engine=innodb default charset=utf8mb4;
