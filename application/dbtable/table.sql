@@ -148,7 +148,7 @@ UPDATE job_category
 SET slug = LOWER(REPLACE(title_en, ' ', '-')) 
 WHERE slug IS NULL OR slug = '';
 
--- table to store news articles
+-- table to store news
 create table news (
     id int auto_increment primary key,
     title_en varchar(255),
@@ -174,6 +174,16 @@ create table news_images (
     foreign key (news_id) references news(id) on delete cascade
 );
 
+alter table news_images modify news_id int null;
+alter table news_images add column description text after news_id;
+
+select news_images.*, news.title_en 
+from news_images
+inner join news on news_images.news_id = news.id;
+
+select news_images.*, news.title_en 
+from news_images
+left join news on news_images.news_id = news.id;
 
 CREATE TABLE IF NOT EXISTS `banners` (
   `id` int(11) NOT NULL AUTO_INCREMENT,

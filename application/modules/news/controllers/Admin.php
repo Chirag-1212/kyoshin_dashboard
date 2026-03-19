@@ -3,9 +3,9 @@ defined('BASEPATH') or exit('No direct script access allowed');
 
 class Admin extends Auth_controller
 {
-    protected $userId;
+    protected $userid;
     protected $table;
-    protected $imageTable;
+    protected $image_table;
     protected $redirect;
     protected $title;
 
@@ -13,70 +13,63 @@ class Admin extends Auth_controller
     {
         parent::__construct();
         $this->table       = 'news';
-        $this->imageTable  = 'news_images';
-        $this->title       = 'News';
-        $this->redirect    = 'news';
-        $this->userId      = $this->data['userId'];
+        $this->image_table = 'news_images';
+        $this->title       = 'news';
+        $this->redirect    = 'news/admin';
+        $this->userid      = $this->data['userId'];
     }
 
-    private function detectTextLanguage(string $text): string
+    private function upload_file($input_name, $upload_dir, $old_path = '')
     {
-        // Devanagari Unicode block: U+0900–U+097F
-        return preg_match('/[\x{0900}-\x{097F}]/u', $text) ? 'np' : 'en';
-    }
-
-    private function uploadImage(string $inputName, string $uploadDir, string $oldPath = '')
-    {
-        if (empty($_FILES[$inputName]['name'])) return $oldPath;
-
-        if (!is_dir($uploadDir)) mkdir($uploadDir, 0777, true);
+        if (empty($_FILES[$input_name]['name'])) return $old_path;
+        if (!is_dir($upload_dir)) mkdir($upload_dir, 0777, true);
 
         $config = [
-            'upload_path'   => $uploadDir,
+            'upload_path'   => $upload_dir,
             'allowed_types' => 'jpeg|jpg|png|webp',
-            'encrypt_name'  => TRUE,
+            'encrypt_name'  => true,
             'max_size'      => '10240',
         ];
 
-        $this->load->library('upload', $config);
+        $this->load->library('upload');
         $this->upload->initialize($config);
 
-        if ($this->upload->do_upload($inputName)) {
-            return ltrim($uploadDir, './') . $this->upload->data('file_name');
+        if ($this->upload->do_upload($input_name)) {
+            return ltrim($upload_dir, './') . $this->upload->data('file_name');
         }
-
-        $this->session->set_flashdata('error', 'Upload Error: ' . $this->upload->display_errors('', ''));
-        return FALSE;
+        return $old_path;
     }
 
-    public function all($page = '')
+    public function all($page = 0)
     {
-        $like  = [];
+        $like = [];
         $param = ['status !=' => '2'];
 
-        if ($search = $this->input->get('table_search')) {
+        $search = $this->input->get('table_search', true);
+        if ($search) {
             $like['title_en'] = $search;
-            $like['title_jp'] = $search;
         }
 
         $total = $this->crud_model->total($this->table, $param, $like);
+        
         $config = [
-            'base_url'    => base_url($this->redirect . '/admin/all'),
+            'base_url'    => base_url($this->redirect . '/all'),
             'total_rows'  => $total,
             'per_page'    => 10,
             'uri_segment' => 4,
-            'reuse_query_string' => TRUE
+            'reuse_query_string' => true
         ];
-        $this->pagination->initialize($config);
 
-        $items = $this->crud_model->getData($this->table, $param, $like, $config['per_page'], $page, '*', 'id DESC');
+        $this->pagination->initialize($config);
+        $items = $this->crud_model->getdata($this->table, $param, $like, $config["per_page"], $page, '*', 'id desc');
 
         $data = array_merge($this->data, [
-            'title'    => $this->title,
-            'page'     => 'list',
-            'list'     => $items,
-            'redirect' => $this->redirect,
-            'pagination' => $this->pagination->create_links(),
+            'title'       => 'Manage ' . ucfirst($this->title),
+            'page'        => 'list',
+            'items'       => $items,
+            'redirect'    => $this->redirect,
+            'pagination'  => $this->pagination->create_links(),
+            'offset'      => $page,
         ]);
 
         $this->load->view('layouts/admin/index', $data);
@@ -85,82 +78,75 @@ class Admin extends Auth_controller
     public function form($id = '')
     {
         if ($this->input->post()) {
-            $titleEn = trim($this->input->post('title_en'));
-            $titleNp = trim($this->input->post('title_jp'));
-
-            if (empty($titleEn) && empty($titleNp)) {
-                $this->session->set_flashdata('error', 'At least one title is required.');
-                redirect($this->redirect . '/admin/form/' . $id);
-            }
-
-            $isNew = empty($id);
-            $slugSource = !empty($titleEn) ? $titleEn : $titleNp;
+            $is_new = empty($id);
             
-            // Logic fixed: detect 'np' correctly
-            $lang = $this->detectTextLanguage($slugSource);
-            $slug = ($lang === 'np') ? 'news-' . ($isNew ? time() : $id) : url_title($slugSource, 'dash', TRUE);
+            // Upload main image (news table)
+            $main_path = $this->upload_file('docpath', './uploads/news/main/', $this->input->post('old_docpath'));
 
-            $mainImagePath = $this->uploadImage('docpath', './uploads/news/main/', $this->input->post('old_docpath'));
-
-            if ($mainImagePath === FALSE) redirect($this->redirect . '/admin/form/' . $id);
-
-            $saveData = [
-                'title_en'   => $titleEn,
-                'title_jp'   => $titleNp,
-                'slug'       => $slug,
+            $save_data = [
+                'title_en'   => $this->input->post('title_en'),
+                'title_jp'   => $this->input->post('title_jp'),
                 'desc_en'    => $this->input->post('desc_en'),
                 'desc_jp'    => $this->input->post('desc_jp'),
-                'docpath'    => $mainImagePath,
+                'docpath'    => $main_path,
                 'status'     => $this->input->post('status'),
                 'updated_on' => date('Y-m-d H:i:s'),
-                'updated_by' => $this->userId,
+                'updated_by' => $this->userid,
             ];
 
-            if ($isNew) {
-                $saveData['created_on'] = date('Y-m-d H:i:s');
-                $saveData['created_by'] = $this->userId;
-                $newsId = $this->crud_model->insert($this->table, $saveData);
+            if ($is_new) {
+                $save_data['created_on'] = date('Y-m-d H:i:s');
+                $save_data['created_by'] = $this->userid;
+                $save_data['slug']       = url_title($this->input->post('title_en'), 'dash', true) . '-' . time();
+                $id = $this->crud_model->insert($this->table, $save_data);
             } else {
-                $this->crud_model->update($this->table, $saveData, ['id' => $id]);
-                $newsId = $id;
+                $this->crud_model->update($this->table, $save_data, ['id' => $id]);
             }
 
-            // Handle Gallery Batch
-            if (!empty($_FILES['gallery_images']['name'][0])) {
-                $this->load->library('upload');
-                foreach ($_FILES['gallery_images']['name'] as $i => $name) {
-                    if (empty($name)) continue;
-                    $_FILES['gallery_item'] = [
-                        'name' => $_FILES['gallery_images']['name'][$i], 'type' => $_FILES['gallery_images']['type'][$i],
-                        'tmp_name' => $_FILES['gallery_images']['tmp_name'][$i], 'error' => $_FILES['gallery_images']['error'][$i],
-                        'size' => $_FILES['gallery_images']['size'][$i]
-                    ];
-                    $path = $this->uploadImage('gallery_item', './uploads/news/gallery/');
-                    if ($path) {
-                        $this->crud_model->insert($this->imageTable, [
-                            'news_id' => $newsId, 'docpath' => $path, 'status' => '1',
-                            'created_on' => date('Y-m-d H:i:s'), 'created_by' => $this->userId
+            // Upload related image (news_images table)
+            if (!empty($_FILES['news_image']['name'])) {
+                $rel_path = $this->upload_file('news_image', './uploads/news/related/');
+                if ($rel_path) {
+                    $existing = $this->crud_model->get_where_single($this->image_table, ['news_id' => $id]);
+                    if ($existing) {
+                        $this->crud_model->update($this->image_table, ['docpath' => $rel_path], ['id' => $existing->id]);
+                    } else {
+                        $this->crud_model->insert($this->image_table, [
+                            'news_id'    => $id,
+                            'docpath'    => $rel_path,
+                            'status'     => 1,
+                            'created_on' => date('Y-m-d H:i:s'),
+                            'created_by' => $this->userid
                         ]);
                     }
                 }
             }
-            redirect($this->redirect . '/admin/all');
+
+            $this->session->set_flashdata('success', 'News saved successfully.');
+            redirect($this->redirect . '/all');
         }
 
         $data = array_merge($this->data, [
-            'title'  => empty($id) ? 'Add ' . $this->title : 'Edit ' . $this->title,
-            'page'   => 'form',
-            'detail' => $this->crud_model->get_where_single($this->table, ['id' => $id]),
-            'gallery_images' => empty($id) ? [] : $this->crud_model->getData($this->imageTable, ['news_id' => $id, 'status !=' => '2'], [], 100, 0, '*', 'id ASC'),
+            'title'          => (empty($id) ? 'Add ' : 'Edit ') . ucfirst($this->title),
+            'page'           => 'form',
+            'detail'         => $id ? $this->crud_model->get_where_single($this->table, ['id' => $id]) : null,
+            'related_image'  => $id ? $this->crud_model->get_where_single($this->image_table, ['news_id' => $id, 'status !=' => 2]) : null,
+            'redirect'       => $this->redirect
         ]);
         $this->load->view('layouts/admin/index', $data);
     }
 
     public function soft_delete($id)
     {
-        $data = ['status' => '2', 'updated_on' => date('Y-m-d H:i:s'), 'updated_by' => $this->userId];
-        $this->crud_model->update($this->table, $data, ['id' => $id]);
-        $this->crud_model->update($this->imageTable, $data, ['news_id' => $id]);
-        redirect($this->redirect . '/admin/all');
+        $update_data = [
+            'status'     => '2', 
+            'updated_on' => date('Y-m-d H:i:s'), 
+            'updated_by' => $this->userid
+        ];
+        $this->crud_model->update($this->table, $update_data, ['id' => $id]);
+        $this->crud_model->update($this->image_table, ['status' => '2'], ['news_id' => $id]);
+        
+        $this->session->set_flashdata('success', 'News deleted successfully.');
+        redirect($this->redirect . '/all');
     }
 }

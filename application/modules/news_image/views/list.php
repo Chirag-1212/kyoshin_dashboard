@@ -1,66 +1,67 @@
 <div class="row">
     <div class="col-md-12">
-        <div class="box">
+        <div class="box box-primary">
             <div class="box-header with-border">
-                <h3 class="box-title"><?= $title; ?> List</h3>
+                <h3 class="box-title">manage <?= $title; ?></h3>
                 <div class="box-tools pull-right">
-                    <a href="<?= base_url($form_link); ?>" class="btn btn-primary btn-sm">Add New Image</a>
+                    <a href="<?= base_url($redirect . '/form'); ?>" class="btn btn-primary btn-sm">
+                        <i class="fa fa-plus"></i> add new
+                    </a>
                 </div>
             </div>
-            
+
             <div class="box-body">
-                <form method="get" action="<?= base_url($redirect . '/all'); ?>" class="form-inline mb-3">
-                    <div class="form-group">
-                        <input type="text" name="table_search" class="form-control" placeholder="search by news_id" value="<?= $this->input->get('table_search'); ?>">
-                    </div>
-                    <button type="submit" class="btn btn-default">search</button>
-                    <a href="<?= base_url($redirect . '/all'); ?>" class="btn btn-default">Clear</a>
-                </form>
+                <div class="well well-sm">
+                    <form action="<?= base_url($redirect . '/all'); ?>" method="GET" class="form-inline">
+                        <input type="text" name="table_search" class="form-control" placeholder="search description..." value="<?= $this->input->get('table_search'); ?>">
+                        <button type="submit" class="btn btn-primary"><i class="fa fa-search"></i> search</button>
+                        <a href="<?= base_url($redirect . '/all'); ?>" class="btn btn-default">clear</a>
+                    </form>
+                </div>
 
                 <table class="table table-bordered table-striped mt-3">
                     <thead>
-                        <tr>
-                            <th>S.N.</th>
-                            <th>News-ID</th>
-                            <th>Image</th>
-                            <th>Status</th>
-                            <th>Actions</th>
+                        <tr class="bg-gray">
+                            <th width="5%" class="text-center">s.n.</th>
+                            <th width="10%">image</th>
+                            <th>description</th>
+                            <th width="10%" class="text-center">status</th>
+                            <th width="15%" class="text-center">actions</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <?php if (!empty($list)): ?>
-                            <?php foreach ($list as $row): ?>
+                        <?php if (!empty($items)): ?>
+                            <?php $i = $offset + 1; foreach ($items as $item): ?>
                                 <tr>
-                                    <td><?= $row->id; ?></td>
-                                    <td><?= $row->news_id; ?></td>
+                                    <td class="text-center"><?= $i++; ?></td>
                                     <td>
-                                        <?php if (!empty($row->docpath)): ?>
-                                            <img src="<?= base_url($row->docpath); ?>" alt="gallery image" style="width: 80px; height: auto;">
+                                        <?php if (!empty($item->docpath)): ?>
+                                            <img src="<?= base_url($item->docpath); ?>" width="60" class="img-thumbnail">
                                         <?php else: ?>
-                                            No Image
+                                            <span class="text-muted small">no image</span>
                                         <?php endif; ?>
                                     </td>
-                                    <td>
-                                        <?= ($row->status == 1) ? '<span class="label label-success">active</span>' : '<span class="label label-danger">deleted</span>'; ?>
+                                    <td><?= !empty($item->description) ? $item->description : '<span class="text-muted">none</span>'; ?></td>
+                                    <td class="text-center">
+                                        <span class="label <?= ($item->status == 1) ? 'label-success' : 'label-danger'; ?>">
+                                            <?= ($item->status == 1) ? 'active' : 'deleted'; ?>
+                                        </span>
                                     </td>
-                                    <td>
-                                        <a href="<?= base_url($form_link . $row->id); ?>" class="btn btn-warning btn-sm">Edit</a>
-                                        <a href="<?= base_url($delete_link . $row->id); ?>" class="btn btn-danger btn-sm" onclick="return confirm('are you sure you want to remove this image?');">delete</a>
+                                    <td class="text-center">
+                                        <div class="btn-group">
+                                            <a href="<?= base_url($redirect . '/form/' . $item->id); ?>" class="btn btn-sm btn-info"><i class="fa fa-edit"></i></a>
+                                            <a href="<?= base_url($redirect . '/soft_delete/' . $item->id); ?>" class="btn btn-sm btn-danger" onclick="return confirm('are you sure?');"><i class="fa fa-trash"></i></a>
+                                        </div>
                                     </td>
                                 </tr>
                             <?php endforeach; ?>
                         <?php else: ?>
-                            <tr>
-                                <td colspan="5" class="text-center">No Gallery Images Found.</td>
-                            </tr>
+                            <tr><td colspan="5" class="text-center">no records found.</td></tr>
                         <?php endif; ?>
                     </tbody>
                 </table>
             </div>
-
-            <div class="box-footer">
-                <?= $pagination; ?>
-            </div>
+            <div class="box-footer clearfix"><div class="pull-right"><?= $pagination; ?></div></div>
         </div>
     </div>
 </div>

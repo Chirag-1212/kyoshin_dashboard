@@ -10,28 +10,43 @@ class Feedback extends Front_controller
     function __construct()
     {
         parent::__construct();
-        // Load libraries here so they are available in all methods
-        $this->load->library(array('form_validation', 'email'));
-        $this->load->model('crud_model');
+        $this->load->library('form_validation');
 
+        // CORS and JSON Headers
         header('Content-type:application/json');
         header("Access-Control-Allow-Origin: *");
         header("Access-Control-Allow-Headers: Authorization, Origin, X-Requested-With, Content-Type, Accept, Content-Length, Accept-Encoding, X-API-KEY, Access-Control-Request-Method");
         header("Access-Control-Allow-Methods: GET, POST, OPTIONS, DELETE, PUT");
-        
-        $this->request_method = $_SERVER["REQUEST_METHOD"];
 
+        $this->request_method = $_SERVER["REQUEST_METHOD"];
         if ($this->request_method == "OPTIONS") {
             die();
         }
 
+        // Table and column definitions (small letters)
         $this->table = 'feedback_message';
         $this->title = 'feedback';
     }
 
-    private function _get_email_config()
+    /**
+     * Internal function to send email to the office
+     */
+    private function send_office_email($id)
     {
-        return array(
+        $detail = $this->crud_model->get_where_single($this->table, array('id' => $id));
+        if (!$detail) return false;
+
+        $subject = 'suyogya ssaccos feedback: ' . $detail->subject;
+        
+        $message = "<h2>feedback details</h2>";
+        $message .= "full name: " . $detail->fullname . "<br>";
+        $message .= "phone: " . $detail->phone . "<br>";
+        $message .= "email: " . $detail->email . "<br>";
+        $message .= "date: " . $detail->created_on . "<br>";
+        $message .= "message: " . $detail->message . "<br>";
+
+        $this->load->library('email');
+        $config = array(
             'protocol'  => 'sendmail',
             'smtp_host' => 'mi3-sr5.supercp.com',
             'smtp_port' => '465',
@@ -39,117 +54,98 @@ class Feedback extends Front_controller
             'charset'   => 'utf-8',
             'wordwrap'  => TRUE
         );
-    }
 
-    public function sendOfficeEmail($id)
-    {
-        $detail = $this->crud_model->get_where_single($this->table, array('id' => $id));
-        if (!$detail) return false;
-
-        $subject = 'New Feedback Received: ' . ($detail->subject ?? 'General');
-        
-        $message = "<h2>Feedback Details</h2>"
-                 . "<strong>Full Name:</strong> {$detail->fullname}<br>"
-                 . "<strong>Phone:</strong> {$detail->phone}<br>"
-                 . "<strong>Email:</strong> {$detail->email}<br>"
-                 . "<strong>Date:</strong> {$detail->created_on}<br>"
-                 . "<strong>Message:</strong><br>" . nl2br($detail->message);
-
-        $this->email->initialize($this->_get_email_config());
-        $this->email->from('no-reply@ssaccos.com', 'System Notification');
+        $this->email->initialize($config);
+        $this->email->from($detail->email, 'feedback from ' . $detail->fullname);
         $this->email->to('info@ssaccos.com');
         $this->email->subject($subject);
         $this->email->message($message);
-        
+
         return $this->email->send();
     }
 
-    function form()
+    /**
+     * API Endpoint to submit feedback
+     * POST: base_url/feedback/form
+     */
+    public function form()
     {
-        // Initializing default error response
-        $response = array(
-            'status' => "Error",
-            'status_code' => 400,
-            'status_message' => "Invalid Request"
-        );
-
         if ($this->request_method != "POST") {
-            $response['status_code'] = 405;
-            $response['status_message'] = "Method Not Allowed";
-        } else {
-            $input_data = json_decode(file_get_contents("php://input"), true);
-            
-            if (!empty($input_data)) {
-                // 1. Verify reCAPTCHA
-                $recaptchaResponse = $input_data['g-recaptcha-response'] ?? '';
-                $userIp = $this->input->ip_address();
-                $secret = '6LcD0y4qAAAAAEf63bTCNj-lyLAyI4D17Wne9D0p';
-                
-                $url = "https://www.google.com/recaptcha/api/siteverify?secret=$secret&response=$recaptchaResponse&remoteip=$userIp";
-                $verify = json_decode(file_get_contents($url), true);
-
-                if (!$verify['success']) {
-                    $response['status_message'] = "reCAPTCHA validation failed";
-                    echo json_encode($response);
-                    return;
-                }
-
-                // 2. Validate Data
-                $email = isset($input_data['email']) ? $this->validation($input_data['email']) : '';
-
-                if (empty($email)) {
-                    $response['status_code'] = 307;
-                    $response['status_message'] = "Email is required";
-                } else {
-                    $save_data = array(
-                        'fullname'   => isset($input_data['fullname']) ? $this->validation($input_data['fullname']) : '',
-                        'phone'      => isset($input_data['phone']) ? $this->validation($input_data['phone']) : '',
-                        'message'    => isset($input_data['message']) ? $this->validation($input_data['message']) : '',
-                        'subject'    => isset($input_data['subject']) ? $this->validation($input_data['subject']) : 'General Feedback',
-                        'email'      => $email,
-                        'address'    => isset($input_data['address']) ? $this->validation($input_data['address']) : '',
-                        'created_on' => date('Y-m-d'),
-                        'status'     => '1',
-                    );
-
-                    $rid = $this->crud_model->inserted($this->table, $save_data);
-
-                    if ($rid) {
-                        // 3. Send Emails
-                        $this->email->initialize($this->_get_email_config());
-                        $this->email->from('no-reply@ssaccos.com', 'Suyogya SSACCOS');
-                        $this->email->to($email);
-                        $this->email->subject('Feedback Submitted Successfully');
-                        
-                        $user_body = "<p>Dear {$save_data['fullname']},</p>
-                                     <p>Thank you for your feedback. We have received it and will respond shortly.</p>
-                                     <p>Regards,<br>Suyogya SSACCOS</p>";
-                        
-                        $this->email->message($user_body);
-                        $this->email->send();
-
-                        // Notify Office
-                        $this->sendOfficeEmail($rid);
-
-                        $response = array(
-                            'status' => "Success",
-                            'status_code' => 200,
-                            'status_message' => "Successfully Submitted",
-                        );
-                    } else {
-                        $response['status_message'] = "Database insertion failed";
-                    }
-                }
-            } else {
-                $response['status_message'] = "No input data detected";
-            }
+            return $this->output_json("error", 405, "access method not allowed");
         }
 
-        echo json_encode($response);
+        $input_data = json_decode(file_get_contents("php://input"), true);
+        if (!$input_data) {
+            return $this->output_json("error", 400, "input data required");
+        }
+
+        // reCAPTCHA Validation
+        $recaptcha_response = $input_data['g-recaptcha-response'] ?? '';
+        $user_ip = $this->input->ip_address();
+        $secret = '6LcD0y4qAAAAAEf63bTCNj-lyLAyI4D17Wne9D0p';
+        
+        $verify = file_get_contents("https://www.google.com/recaptcha/api/siteverify?secret={$secret}&response={$recaptcha_response}&remoteip={$user_ip}");
+        $captcha_status = json_decode($verify, true);
+
+        // Optional: Uncomment below to strictly enforce captcha
+        /*
+        if (!$captcha_status['success']) {
+             return $this->output_json("error", 401, "captcha verification failed");
+        }
+        */
+
+        $email = isset($input_data['email']) ? $this->clean_input($input_data['email']) : '';
+        if (empty($email)) {
+            return $this->output_json("error", 307, "email required!!!");
+        }
+
+        $save_data = array(
+            'fullname'   => isset($input_data['fullname']) ? $this->clean_input($input_data['fullname']) : '',
+            'phone'      => isset($input_data['phone'])    ? $this->clean_input($input_data['phone'])    : '',
+            'subject'    => isset($input_data['subject'])  ? $this->clean_input($input_data['subject'])  : '',
+            'message'    => isset($input_data['message'])  ? $this->clean_input($input_data['message'])  : '',
+            'email'      => $email,
+            'created_on' => date('Y-m-d H:i:s'),
+            'status'     => '1',
+        );
+
+        $inserted_id = $this->crud_model->inserted($this->table, $save_data);
+
+        if ($inserted_id) {
+            // Send Auto-reply to User
+            $this->send_user_reply($email, $save_data['fullname']);
+            
+            // Send Notification to Office
+            $this->send_office_email($inserted_id);
+
+            return $this->output_json("success", 200, "successfully submitted");
+        }
+
+        return $this->output_json("error", 300, "error in submitting the data");
     }
 
-    private function validation($data)
+    private function send_user_reply($to_email, $name)
+    {
+        $this->load->library('email');
+        $this->email->from('no-reply@ssaccos.com', 'suyogya ssaccos.');
+        $this->email->to($to_email);
+        $this->email->subject('feedback submission successful');
+        $this->email->message("<p>dear $name,</p><p>your feedback has been submitted successfully. we will respond shortly.</p><p>regards,<br>suyogya ssaccos.</p>");
+        $this->email->send();
+    }
+
+    private function clean_input($data)
     {
         return htmlspecialchars(stripslashes(trim($data)));
+    }
+
+    private function output_json($status, $code, $message)
+    {
+        echo json_encode(array(
+            'status'         => $status,
+            'status_code'    => $code,
+            'status_message' => $message
+        ));
+        exit;
     }
 }

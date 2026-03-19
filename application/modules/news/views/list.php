@@ -1,13 +1,15 @@
+<?php defined('BASEPATH') or exit('No direct script access allowed'); ?>
+
 <div class="row">
     <div class="col-md-12">
         <div class="box">
             <div class="box-header with-border">
                 <h3 class="box-title">Manage <?= $title; ?></h3>
-                <a href="<?= base_url($redirect . '/admin/form'); ?>" class="btn btn-primary btn-sm pull-right">Add New</a>
+                <a href="<?= base_url($redirect . '/form'); ?>" class="btn btn-primary btn-sm pull-right">Add New</a>
             </div>
 
             <div class="box-body">
-                <form action="<?= base_url($redirect . '/admin/all'); ?>" method="GET" class="form-inline mb-3">
+                <form action="<?= base_url($redirect . '/all'); ?>" method="GET" class="form-inline mb-3">
                     <div class="form-group">
                         <input type="text" name="table_search" class="form-control" placeholder="Search title..." value="<?= $this->input->get('table_search'); ?>">
                     </div>
@@ -17,22 +19,27 @@
                 <table class="table table-bordered table-striped mt-3">
                     <thead>
                         <tr>
-                            <th>S.N.</th>
+                            <th style="width: 60px;">S.N.</th>
                             <th>Image</th>
-                            <th>Title (EN)</th>
-                            <th>Title (JP)</th>
+                            <th>Title (English)</th>
+                            <th>Title (Japanese)</th>
                             <th>Status</th>
-                            <th>Actions</th>
+                            <th style="width: 150px;">Actions</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <?php if (!empty($list)): ?>
-                            <?php foreach ($list as $item): ?>
+                        <?php if (!empty($items)): ?>
+                            <?php 
+                            $i = (isset($offset) ? $offset : 0) + 1; 
+                            foreach ($items as $item): 
+                            ?>
                                 <tr>
-                                    <td><?= $item->id; ?></td>
+                                    <td><?= $i++; ?></td>
                                     <td>
                                         <?php if (!empty($item->docpath)): ?>
                                             <img src="<?= base_url($item->docpath); ?>" width="50" height="50" class="img-thumbnail">
+                                        <?php else: ?>
+                                            <span class="text-muted small">No Image</span>
                                         <?php endif; ?>
                                     </td>
                                     <td><?= $item->title_en; ?></td>
@@ -43,10 +50,10 @@
                                         </span>
                                     </td>
                                     <td>
-                                        <a href="<?= base_url($redirect . '/admin/form/' . $item->id); ?>" class="btn btn-xs btn-info">Edit</a>
-                                        <a href="<?= base_url($redirect . '/admin/soft_delete/' . $item->id); ?>" 
+                                        <a href="<?= base_url($redirect . '/form/' . $item->id); ?>" class="btn btn-xs btn-info">Edit</a>
+                                        <a href="<?= base_url($redirect . '/soft_delete/' . $item->id); ?>" 
                                            class="btn btn-xs btn-danger" 
-                                           onclick="return confirm('Are you sure?');">Delete</a>
+                                           onclick="return confirm('Are you sure you want to delete this?');">Delete</a>
                                     </td>
                                 </tr>
                             <?php endforeach; ?>
@@ -57,8 +64,10 @@
                 </table>
             </div>
 
-            <div class="box-footer">
-                <?= $pagination; ?>
+            <div class="box-footer clearfix">
+                <div class="pull-right">
+                    <?= $pagination; ?>
+                </div>
             </div>
         </div>
     </div>
