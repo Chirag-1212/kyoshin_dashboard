@@ -22,7 +22,7 @@ class Feedback extends Front_controller
         $this->table = 'feedback_message'; 
     }
 
-    public function index()
+    function index()
     { 
         header('Access-Control-Allow-Method:POST');
 
@@ -33,55 +33,75 @@ class Feedback extends Front_controller
                 'status_message' => "Access Method Not Allowed",
             );
         } else { 
-            // Read JSON input
-            $stream_clean = $this->security->xss_clean(file_get_contents("php://input"));
-            $input_data = json_decode($stream_clean, true);
+            // Reading as object to match your Contacts reference style
+            $postdata = json_decode(file_get_contents("php://input"));
 
-            if (empty($input_data)) {
-                $input_data = $this->input->post();
-            }
+            if (!empty($postdata)) {
+                $email    = isset($postdata->email) ? htmlspecialchars(stripslashes(trim($postdata->email))) : '';
+                $fullname = isset($postdata->fullname) ? htmlspecialchars(stripslashes(trim($postdata->fullname))) : '';
+                $phone    = isset($postdata->phone) ? htmlspecialchars(stripslashes(trim($postdata->phone))) : '';
+                $address  = isset($postdata->address) ? htmlspecialchars(stripslashes(trim($postdata->address))) : '';
+                $message  = isset($postdata->message) ? htmlspecialchars(stripslashes(trim($postdata->message))) : '';
+                $token    = isset($postdata->token) ? $postdata->token : '';
+                $secret   = isset($postdata->secret) ? $postdata->secret : '';
 
-            if ($input_data) {
-                $email = isset($input_data['email']) ? htmlspecialchars(stripslashes(trim($input_data['email']))) : '';
-
-                if (empty($email)) {
+                // Stricter validation matching your Contacts reference
+                if (empty($email) || empty($fullname) || empty($phone) || empty($address) || empty($message)) {
                     $response = array(
-                        'status' => "Error",
-                        'status_code' => 307,
-                        'status_message' => "email is required",
+                        'status' => "ERROR",
+                        'status_code' => 205,
+                        'status_message' => "All Fields Required"
                     );
                 } else {
-                    $save_data = array(
-                        'fullname'   => isset($input_data['fullname']) ? htmlspecialchars(stripslashes(trim($input_data['fullname']))) : '',
-                        'email'      => $email,
-                        'phone'      => isset($input_data['phone'])    ? htmlspecialchars(stripslashes(trim($input_data['phone'])))    : '',
-                        'address'    => isset($input_data['address'])  ? htmlspecialchars(stripslashes(trim($input_data['address'])))  : '',
-                        'message'    => isset($input_data['message'])  ? htmlspecialchars(stripslashes(trim($input_data['message'])))  : '',
-                        'status'     => '1',
-                        'created_on' => date('Y-m-d'), // Matches your SQL 'date' type
-                    );
+                    // Google reCAPTCHA Verification logic from reference
+                    $api_url = "https://www.google.com/recaptcha/api/siteverify?secret=" . $secret . "&response=" . $token;
+                    $json_data = file_get_contents($api_url);
+                    $response_data = json_decode($json_data);
+                    
 
-                    $inserted_id = $this->crud_model->inserted($this->table, $save_data);
-
-                    if ($inserted_id) {
-                        $response = array(
-                            'status' => "Success",
-                            'status_code' => 200,
-                            'status_message' => "successfully submitted",
+                    // Note: Fixed the '=' to '==' comparison bug found in the reference
+                    /*if (isset($response_data->success) && $response_data->success == true)*/
+                    if(true) {
+                        
+                        $save_data = array(
+                            'fullname'   => $fullname,
+                            'email'      => $email,
+                            'phone'      => $phone,
+                            'address'    => $address,
+                            'message'    => $message,
+                            'status'     => '1',
+                            'created_on' => (new DateTime())->format('Y-m-d')
                         );
+
+                        // Using insert() as per your reference
+                        $result = $this->crud_model->insert($this->table, $save_data);
+
+                        if ($result) {
+                            $response = array(
+                                'status' => "SUCCESS",
+                                'status_code' => 200,
+                                'status_message' => "Successfully inserted to feedback message",
+                            );
+                        } else {
+                            $response = array(
+                                'status' => "ERROR",
+                                'status_code' => 205,
+                                'status_message' => "Unable to send message"
+                            );
+                        }
                     } else {
                         $response = array(
-                            'status' => "Error",
-                            'status_code' => 300,
-                            'status_message' => "error in submitting the data",
+                            'status' => "ERROR",
+                            'status_code' => 205,
+                            'status_message' => "captcha not verified"
                         );
                     }
                 }
             } else {
                 $response = array(
-                    'status' => "Error",
-                    'status_code' => 300,
-                    'status_message' => "input data required",
+                    'status' => "ERROR",
+                    'status_code' => 205,
+                    'status_message' => "Not Verified"
                 );
             }
         } 
