@@ -49,44 +49,42 @@
                         </div>
 
                         <div class="row">
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label>Description (English)</label>
-                                <textarea name="desc_en" class="form-control" rows="5" placeholder="Enter course description in English"><?php echo isset($detail->desc_en) ? $detail->desc_en : ''; ?></textarea>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>Description (English)</label>
+                                    <textarea name="desc_en" class="form-control" rows="5" placeholder="Enter course description in English"><?php echo isset($detail->desc_en) ? $detail->desc_en : ''; ?></textarea>
+                                </div>
                             </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label>Description (Japanese)</label>
-                                <textarea name="desc_jp" class="form-control" rows="5" placeholder="Enter course description in Japanese"><?php echo isset($detail->desc_jp) ? $detail->desc_jp : ''; ?></textarea>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>Description (Japanese)</label>
+                                    <textarea name="desc_jp" class="form-control" rows="5" placeholder="Enter course description in Japanese"><?php echo isset($detail->desc_jp) ? $detail->desc_jp : ''; ?></textarea>
+                                </div>
                             </div>
-                        </div>
                         </div>
 
-                            <div class="box-header with-border" style="padding-left: 0; margin-top: 20px;">
-                                <h3 class="box-title">Course Highlights</h3>
-                            </div>
+                        <div class="box-header with-border" style="padding-left: 0; margin-top: 20px;">
+                            <h3 class="box-title">Course Highlights</h3>
+                        </div>
+                        
+                        <div id="dynamic-points-wrapper" style="margin-bottom: 15px;">
+                            <?php 
+                            $saved_points = (isset($detail->course_learn_points)) ? json_decode($detail->course_learn_points, true) : [];
+                            if (empty($saved_points)) $saved_points = [['type' => 'check', 'text' => '']];
                             
-                            <div id="dynamic-points-wrapper" style="margin-bottom: 15px;">
-                                <?php 
-                                $saved_points = (isset($detail->course_learn_points)) ? json_decode($detail->course_learn_points, true) : [];
-                                if (empty($saved_points)) $saved_points = [['type' => 'check', 'text' => '']];
-                                
-                                foreach ($saved_points as $item): ?>
-                                    <div class="row point-row" style="margin-bottom: 8px;">
-                                        <input type="hidden" name="point_type[]" value="check">
-                                        <div class="col-md-11">
-                                            <input type="text" name="point_text[]" class="form-control" placeholder="Bullet point description..." value="<?php echo htmlspecialchars($item['text']); ?>">
-                                        </div>
-                                        <div class="col-md-1">
-                                            <button type="button" class="btn btn-danger remove-point-btn"><i class="fa fa-trash"></i></button>
-                                        </div>
+                            foreach ($saved_points as $item): ?>
+                                <div class="row point-row" style="margin-bottom: 8px;">
+                                    <input type="hidden" name="point_type[]" value="check">
+                                    <div class="col-md-6 col-sm-8 col-xs-10"> <input type="text" name="point_text[]" class="form-control" placeholder="Bullet point description..." value="<?php echo htmlspecialchars($item['text']); ?>">
                                     </div>
-                                <?php endforeach; ?>
-                            </div>
-                            <button type="button" id="add-more-points" class="btn btn-dark btn-sm" style="margin-bottom: 20px;">
-                                <i class="fa fa-plus"></i> Add Highlight
-                            </button>
+                                    <div class="col-md-1 col-sm-2 col-xs-2"> <button type="button" class="btn btn-danger remove-point-btn"><i class="fa fa-trash"></i></button>
+                                    </div>
+                                </div>
+                            <?php endforeach; ?>
+                        </div>
+                        <button type="button" id="add-more-points" class="btn btn-dark btn-sm" style="margin-bottom: 20px;">
+                            <i class="fa fa-plus"></i> Add Highlight
+                        </button>
 
                         <div class="box-header with-border" style="padding-left: 0;">
                             <h3 class="box-title">Media & Status</h3>
@@ -126,19 +124,19 @@
 document.addEventListener('DOMContentLoaded', () => {
     const wrapper = document.getElementById('dynamic-points-wrapper');
     
-    // Efficient Event Delegation for Adding
     document.getElementById('add-more-points').addEventListener('click', () => {
         const div = document.createElement('div');
         div.className = 'row point-row';
         div.style.marginBottom = '8px';
         div.innerHTML = `
             <input type="hidden" name="point_type[]" value="check">
-            <div class="col-md-11"><input type="text" name="point_text[]" class="form-control" placeholder="Bullet point description..."></div>
-            <div class="col-md-1"><button type="button" class="btn btn-danger remove-point-btn"><i class="fa fa-trash"></i></button></div>`;
+            <div class="col-md-6 col-sm-8 col-xs-10"> <input type="text" name="point_text[]" class="form-control" placeholder="Bullet point description...">
+            </div>
+            <div class="col-md-1 col-sm-2 col-xs-2"> <button type="button" class="btn btn-danger remove-point-btn"><i class="fa fa-trash"></i></button>
+            </div>`;
         wrapper.appendChild(div);
     });
 
-    // Efficient Event Delegation for Removing
     wrapper.addEventListener('click', (e) => {
         if (e.target.closest('.remove-point-btn')) {
             const rows = wrapper.querySelectorAll('.point-row');
