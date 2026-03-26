@@ -252,3 +252,6 @@ create table `feedback_message` (
   `updated_on` date default null,
   primary key (`id`)
 ) engine=innodb default charset=utf8mb4;
+
+ALTER TABLE `our_courses` 
+ADD COLUMN `course_learn_points` TEXT NULL AFTER `desc_jp`;

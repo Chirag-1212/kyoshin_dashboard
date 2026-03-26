@@ -20,9 +20,8 @@ class Admin extends Auth_controller
     public function all($page = '')
     {
         $like = [];
-        $param = ['status !=' => '2']; // Hide soft-deleted items
+        $param = ['status !=' => '2']; 
 
-        // 1. Handle Search Filters
         $search = $this->input->get('Title');
         $status = $this->input->get('status');
         $date_from = $this->input->get('date_from');
@@ -38,7 +37,6 @@ class Admin extends Auth_controller
         if ($date_from) $param['created_on >='] = $date_from . ' 00:00:00';
         if ($date_to)   $param['created_on <='] = $date_to . ' 23:59:59';
 
-        // 2. Pagination Configuration
         $total = $this->crud_model->total($this->table, $param, $like);
         
         $get_params = $_GET;
@@ -55,8 +53,7 @@ class Admin extends Auth_controller
 
         $this->pagination->initialize($config);
         
-        // 3. Fetch Data
-        // IMPORTANT: Use $page as the offset
+        $page = ($this->uri->segment(4)) ? $this->uri->segment(4) : 0;
         $items = $this->crud_model->getData($this->table, $param, $like, $config["per_page"], $page, '*', 'id DESC');
         
         $data = array_merge($this->data, [
@@ -72,19 +69,20 @@ class Admin extends Auth_controller
         $this->load->view('layouts/admin/index', $data);
     }
 
-public function form($id = '')
+    public function form($id = '')
     {
+        $detail = $this->crud_model->get_where_single($this->table, ['id' => $id]);
+
         if ($this->input->post()) {
             $this->form_validation->set_rules('title_en', 'Title', 'required|trim');
 
             if ($this->form_validation->run()) {
-                $id = $this->input->post('id');
+                $post_id = $this->input->post('id');
                 $file_name = $this->input->post('old_docpath');
 
+                // 1. Image Upload Logic
                 if (!empty($_FILES['docpath']['name'])) {
                     $upload_path = './uploads/courses/';
-                    
-                    // Automatically create directory if it doesn't exist
                     if (!is_dir($upload_path)) {
                         mkdir($upload_path, 0777, true);
                     }
@@ -96,48 +94,85 @@ public function form($id = '')
                     ];
                     
                     $this->load->library('upload', $config);
-                    // Re-initialize to ensure the new path is picked up
                     $this->upload->initialize($config);
 
                     if ($this->upload->do_upload('docpath')) {
                         $file = $this->upload->data();
                         $file_name = 'uploads/courses/' . $file['file_name'];
                     } else {
-                        // Display error if upload fails
-                        $upload_error = $this->upload->display_errors('', '');
                         $this->session->set_flashdata('error', $this->upload->display_errors());
                         redirect($this->redirect . '/admin/form/' . $id);
                     }
                 }
 
-                $slug = url_title($this->input->post('title_en'), 'dash', TRUE);
+                // 2. JSON Logic for points
+                $types = $this->input->post('point_type');
+                $texts = $this->input->post('point_text');
+                $combined_points = [];
+
+                if (!empty($texts)) {
+                    foreach ($texts as $key => $val) {
+                        if (!empty(trim($val))) {
+                            $combined_points[] = [
+                                'type' => $types[$key],
+                                'text' => trim($val)
+                            ];
+                        }
+                    }
+                }
+                $json_points = json_encode($combined_points);
+
+                // 3. Robust Slug Logic
+                $title_en = $this->input->post('title_en');
+                $checktext = $this->crud_model->detectTextLanguage($title_en);
+                
+                if($checktext == true){
+                    $text = $title_en;      
+                } else {
+                    $text = $this->title . ' ' . time();
+                }
+
+                $generated_slug = $this->crud_model->createUrlSlug($text);
+
+                // If adding new course, check for slug uniqueness
+                if (empty($post_id) && empty($id)) {
+                    $check_slug = $this->crud_model->get_where_single($this->table, array('slug' => $generated_slug));
+                    if (empty($check_slug)) {
+                        $final_slug = strtolower($generated_slug);
+                    } else {
+                        $final_slug = strtolower($generated_slug) . '-' . time();
+                    }
+                } else {
+                    // On update, keep existing slug from database
+                    $final_slug = ($detail) ? $detail->slug : strtolower($generated_slug);
+                }
 
                 $update_data = [
-                    'title_en'    => $this->input->post('title_en'),
-                    'title_jp'    => $this->input->post('title_jp'),
-                    'slug'        => $slug,
-                    'sub_level'   => $this->input->post('sub_level'),
-                    'sub_text_en' => $this->input->post('sub_text_en'),
-                    'sub_text_jp' => $this->input->post('sub_text_jp'),
-                    'desc_en'     => $this->input->post('desc_en'),
-                    'desc_jp'     => $this->input->post('desc_jp'),
-                    'docpath'     => $file_name,
-                    'status'      => $this->input->post('status'), 
-                    'updated_on'  => date('Y-m-d H:i:s'),
-                    'updated_by'  => $this->userId
+                    'title_en'            => $title_en,
+                    'title_jp'            => $this->input->post('title_jp'),
+                    'slug'                => $final_slug,
+                    'sub_level'           => $this->input->post('sub_level'),
+                    'sub_text_en'         => $this->input->post('sub_text_en'),
+                    'sub_text_jp'         => $this->input->post('sub_text_jp'),
+                    'desc_en'             => $this->input->post('desc_en'),
+                    'desc_jp'             => $this->input->post('desc_jp'),
+                    'course_learn_points' => $json_points,
+                    'docpath'             => $file_name,
+                    'status'              => $this->input->post('status'), 
+                    'updated_on'          => date('Y-m-d H:i:s'),
+                    'updated_by'          => $this->userId
                 ];
                 
-                $post_id = $this->input->post('id');
-                $final_id = !empty($id) ? $id : $post_id;
+                $final_target_id = !empty($id) ? $id : $post_id;
 
-                if (empty($final_id)) {
+                if (empty($final_target_id)) {
                     $update_data['created_on'] = date('Y-m-d H:i:s');
                     $update_data['created_by'] = $this->userId;
                     $this->crud_model->insert($this->table, $update_data);
-                    $this->session->set_flashdata('success', 'Information added successfully');
+                    $this->session->set_flashdata('success', 'Course added successfully');
                 } else {
-                    $this->crud_model->update($this->table, $update_data, ['id' => $final_id]);
-                    $this->session->set_flashdata('success', 'Information updated successfully');
+                    $this->crud_model->update($this->table, $update_data, ['id' => $final_target_id]);
+                    $this->session->set_flashdata('success', 'Course updated successfully');
                 }
 
                 redirect($this->redirect . '/admin/all');
@@ -145,7 +180,7 @@ public function form($id = '')
         }
 
         $data = array_merge($this->data, [
-            'detail'   => $this->crud_model->get_where_single($this->table, ['id' => $id]),
+            'detail'   => $detail,
             'title'    => ($id == '') ? 'Add ' . $this->title : 'Edit ' . $this->title,
             'page'     => 'form',
             'redirect' => $this->redirect
@@ -155,19 +190,24 @@ public function form($id = '')
     }
 
     public function soft_delete($id){
+        if ($id == '' || $id == 0) {
+            $this->session->set_flashdata('error', 'Select Atleast One');
+            redirect($this->redirect . '/admin/all');
+        }
+
         $data = array(
             'status' => '2',
             'updated_by' => $this->userId, 
-            'updated' => date('Y-m-d'),
+            'updated_on' => date('Y-m-d H:i:s'),
         );
-        $this->db->where(array('id'=>$id));
-        $result = $this->db->delete($this->table);
-        if($result==true){
+        
+        $result = $this->crud_model->update($this->table, $data, array('id' => $id));
+        
+        if($result){
             $this->session->set_flashdata('success','Successfully Deleted.');
-            redirect($this->redirect.'all');
-        }else{
+        } else {
             $this->session->set_flashdata('error', 'Unable To Delete.');
-            redirect($this->redirect.'all');
         }
+        redirect($this->redirect . '/admin/all');
     }
 }
