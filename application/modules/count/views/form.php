@@ -76,7 +76,7 @@
                                     <input type="submit" name="submit" class="btn btn-sm btn-primary"
                                         id="submit" value="save">
                                     
-                                    <a href="<?php echo base_url($redirect); ?>" 
+                                    <a href="<?php echo base_url($redirect . '/admin/all'); ?>" 
                                        class="btn btn-sm btn-default" 
                                        style="margin-left: 5px;">Cancel</a>
                                 </div>

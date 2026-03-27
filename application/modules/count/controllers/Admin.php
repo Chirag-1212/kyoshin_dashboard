@@ -75,18 +75,22 @@ class Admin extends Auth_controller
                     'status'     => $this->input->post('status')
                 ];
 
-                if (empty($id)) {
-                    // Slug generation logic (Standardized with Banner pattern)
-                    $slug = url_title($this->input->post('title'), 'dash', TRUE);
+               if (empty($post_id)) {
+                    $title_en = $this->input->post('title_en');
+                    
+                    // Generate the base slug using your model method
+                    $slug = $this->crud_model->createUrlSlug($title_en);
                     
                     // Check for unique slug in DB
-                    $check_slug = $this->crud_model->get_where_single($this->table, ['slug' => $slug]);
-                    if (!empty($check_slug)) {
-                        $saveData['slug'] = $slug . '-' . time();
+                    $check_slug = $this->crud_model->get_where_single($this->table, array('slug' => $slug));
+                    
+                    if (empty($check_slug)) {
+                        $saveData['slug'] = strtolower($slug);
                     } else {
-                        $saveData['slug'] = $slug;
+                        // Append timestamp if slug already exists
+                        $saveData['slug'] = strtolower($slug) . '-' . time();
                     }
-
+                    
                     $saveData['created_on'] = date('Y-m-d');
                     $saveData['created_by'] = $this->userId;
                     $result = $this->crud_model->insert($this->table, $saveData);
