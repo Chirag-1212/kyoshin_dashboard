@@ -57,7 +57,7 @@ public function all($page = '')
         $this->load->view('layouts/admin/index', $data);
     }
 
-    public function form($id = '')
+public function form($id = '')
     {
         $detail = $this->crud_model->get_where_single($this->table, ['id' => $id]);
         $upload_path = 'uploads/banners/';
@@ -70,8 +70,23 @@ public function all($page = '')
                 $id = $this->input->post('id');
                 $file_name = $this->input->post('old_docpath'); 
                 
-                // Automatically generate slug from title
-                $slug = url_title($this->input->post('title'), 'dash', TRUE);
+                // --- START: Updated Slug Logic ---
+            $title_en = $this->input->post('title');
+            $slug = $this->crud_model->createUrlSlug($title_en);
+
+            // Check uniqueness, but ignore current record ID if we are editing
+            $where_check = array('slug' => $slug);
+            if (!empty($post_id)) {
+                $where_check['id !='] = $post_id;
+            }
+
+            $check_slug = $this->crud_model->get_where_single($this->table, $where_check);
+            
+            if (empty($check_slug)) {
+                $final_slug = strtolower($slug);
+            } else {
+                $final_slug = strtolower($slug) . '-' . time();
+            }
 
                 if (!empty($_FILES['docpath']['name'])) {
                     if (!is_dir($upload_path)) mkdir($upload_path, 0777, true);
