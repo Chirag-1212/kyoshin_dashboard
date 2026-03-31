@@ -4,15 +4,15 @@
             <div class="box-header with-border">
                 <h3 class="box-title"><?= $title; ?></h3>
             </div>
-            <?= form_open_multipart($redirect . '/form/' . ($detail->id ?? ''), ['class' => 'form-horizontal']); ?>
+            <?= form_open_multipart($redirect . '/form/' . (isset($detail->id) ? $detail->id : ''), ['class' => 'form-horizontal']); ?>
                 <div class="box-body">
-                    <input type="hidden" name="id" value="<?= $detail->id ?? ''; ?>">
-                    <input type="hidden" name="old_docpath" value="<?= $detail->docpath ?? ''; ?>">
+                    <input type="hidden" name="id" value="<?= isset($detail->id) ? $detail->id : ''; ?>">
+                    <input type="hidden" name="old_docpath" value="<?= isset($detail->docpath) ? $detail->docpath : ''; ?>">
 
                     <div class="form-group">
                         <label class="col-sm-3 control-label">description</label>
                         <div class="col-sm-9">
-                            <textarea name="description" class="form-control" rows="3" placeholder="enter description (optional)"><?= $detail->description ?? ''; ?></textarea>
+                            <textarea name="description" class="form-control" rows="3" placeholder="enter description (optional)"><?= isset($detail->description) ? $detail->description : ''; ?></textarea>
                         </div>
                     </div>
 

@@ -16,7 +16,7 @@ class Admin extends Auth_controller
         $this->news_table = 'news';
         $this->title      = 'news images';
         $this->redirect   = 'news_image/admin'; 
-        $this->userId     = $this->data['userId'] ?? 0;
+        $this->userId     = isset($this->data['userId']) ? $this->data['userId'] : 0;
     }
 
     public function all($page = 0)
@@ -103,7 +103,7 @@ class Admin extends Auth_controller
                     'news_id'     => $this->input->post('news_id') ?: null,
                     'description' => $this->input->post('description'),
                     'docpath'     => $file_name,
-                    'status'      => $this->input->post('status') ?? 1,
+                    'status'      => ($this->input->post('status') !== null) ? $this->input->post('status') : 1,
                 ];
 
                 if (empty($post_id)) {
@@ -142,6 +142,6 @@ class Admin extends Auth_controller
         } else {
             $this->session->set_flashdata('error', 'Unable to delete item.');
         }
-        redirect($this->redirect . 'all');
+        redirect($this->redirect . '/all');
     }
 }
