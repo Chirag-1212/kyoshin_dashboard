@@ -4,13 +4,8 @@
             <div class="box">
                 <div class="box-header">
                     <h3 class="box-title">
-                        <?php
-                        // Permission check based on your reference style
-                        $check_form = $this->crud_model->get_module_function_for_role($redirect, $form_check_value);
-                        if ($check_form == true) {
-                        ?>
                         <a href="<?php echo base_url($form_link); ?>" class="btn btn-sm btn-primary">Add New</a>
-                        <?php } ?>
+                        <?php  ?>
                     </h3>
                     <div class="box-tools">
                         <form action="" method="get">

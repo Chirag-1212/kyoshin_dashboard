@@ -115,7 +115,24 @@ class Admin extends Auth_controller
                     }
                 }
 
-                $slug = url_title($this->input->post('title_en'), 'dash', TRUE);
+                //Updated Slug Logic
+                $title_en = $this->input->post('title');
+                $slug = $this->crud_model->createUrlSlug($title_en);
+
+                // Check uniqueness, but ignore current record ID if we are editing
+                $where_check = array('slug' => $slug);
+                if (!empty($post_id)) {
+                    $where_check['id !='] = $post_id;
+                }
+
+                $check_slug = $this->crud_model->get_where_single($this->table, $where_check);
+                
+                // Define slug for the data array
+                if (empty($check_slug)) {
+                    $final_slug = strtolower($slug);
+                } else {
+                    $final_slug = strtolower($slug) . '-' . time();
+                }
 
                 $update_data = [
                     'title_en'            => $this->input->post('title_en'),
